@@ -187,6 +187,20 @@
       recipe: { wb: 'Tageslicht', wbShift: 'A3 / 0', exposure: '+1/3 EV', nr: '-3', grain: 'Mittel', note: 'Urlaub, Sommer, goldene Stunde.' },
     },
     {
+      id: 'sunlit', name: 'Sonnenlicht-Film', file: 'SUNLIT', group: NEG,
+      desc: 'Sonniger Negativfilm: sattes Grün, leuchtendes Gelb, blasser dunstiger Himmel, weiche Lichter, warme Steine.',
+      params: {
+        skinProtect: 30, skinGold: 25,
+        temp: 5, exposure: 0.15, contrast: 30, highlights: -25, shadows: -15, fade: 2, whiteMatte: 3, vibrance: 15,
+        splitShadowHue: 100, splitShadowAmt: 5, splitMidHue: 75, splitMidAmt: 5, splitHighHue: 95, splitHighAmt: 10,
+        hsl: {
+          red: { h: 5, s: 8 }, orange: { h: 5, s: 10 }, yellow: { s: 35, l: 10 }, green: { h: -25, s: 25, l: 3 },
+          aqua: { s: -40, l: 5 }, blue: { s: -45, l: 12 }, purple: { s: -20 }, magenta: { s: -15 },
+        },
+      },
+      recipe: { wb: 'Tageslicht', exposure: '+1/3 EV', grain: 'Schwach', note: 'Sonne und Gegenlicht in der Natur, Bäume, Küste. Bei bedecktem Himmel wirkt es ruhiger.' },
+    },
+    {
       id: 'everyday400', name: 'Alltagsfilm 400', file: 'EVRYD400', group: NEG,
       desc: 'Kräftiger Alltagsfilm: warm, satte Rot- und Gelbtöne, etwas Korn-Gefühl.',
       params: {
@@ -618,6 +632,7 @@
     portrait800: {"name": "Portrait Film 800", "desc": "Warmer and richer than Portrait Film 400, slightly cool shadows.", "note": "Evening light, interiors, concerts."},
     landscape100: {"name": "Landscape Film 100", "desc": "Fine-grain colour film: punchy, contrasty, deep blue.", "note": "Landscape and architecture. Careful with skin tones, they get strong quickly."},
     summer200: {"name": "Summer Film 200", "desc": "Sunny consumer film: warm, strong yellows, nostalgic.", "note": "Holidays, summer, golden hour."},
+    sunlit: {"name": "Sunlit Film", "desc": "Sunny negative film: rich green, glowing yellow, pale hazy sky, soft highlights, warm stone.", "note": "Sun and backlight in nature, trees, coast. Calmer under an overcast sky."},
     everyday400: {"name": "Everyday Film 400", "desc": "Punchy everyday film: warm, rich reds and yellows, a hint of grain feel.", "note": "Snapshots, parties, everyday life."},
     retro200: {"name": "Retro Film 200", "desc": "Budget retro film: warm, slightly matte, muted green and blue.", "note": "Summer and travel photos with a 90s feel."},
     classicslide: {"name": "Classic Slide", "desc": "Legendary-style slide film: deep reds and blues, rich shadows, vintage contrast.", "note": "Like slide film: protect the highlights, rather expose a bit less."},
