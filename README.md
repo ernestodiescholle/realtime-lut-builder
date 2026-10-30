@@ -9,10 +9,25 @@ out of the camera, no RAW editing. The same LUTs also work for video.
 It runs entirely in your browser. No installation, no account, no upload – your photos never
 leave your computer.
 
-**Try it:** https://ernestodiescholle.github.io/realtime-lut-builder/
-
 <p align="center"><img src="docs/examples/teal-orange-golden-hour.jpg" width="820" alt="Teal & Orange, straight out of camera"></p>
 <p align="center"><sub>Teal &amp; Orange – JPEG straight out of the LUMIX S9 with Real Time LUT</sub></p>
+
+## Get started – no installation
+
+**Easiest: use it in your browser.** Open
+
+### 👉 [ernestodiescholle.github.io/realtime-lut-builder](https://ernestodiescholle.github.io/realtime-lut-builder/)
+
+on a computer (Chrome, Safari, Edge or Firefox). That's it: no download, no account, no sign-up.
+Your photos are processed on your own computer and are never uploaded.
+
+**Prefer to use it offline?**
+
+1. On the [repository page](https://github.com/ernestodiescholle/realtime-lut-builder), click the green **Code** button › **Download ZIP**.
+2. Unzip the file.
+3. Double-click `index.html` – the app opens in your browser and works without internet.
+
+No GitHub account needed for either way. Then continue with [How to use](#how-to-use).
 
 ## Examples
 
@@ -78,9 +93,14 @@ No photo at hand? The built-in synthetic V-Log test image lets you try everythin
 - The app warns you when a loaded image does not look like plain V-Log (e.g. a Standard JPEG or
   V-Log with a LUT already applied).
 
-## Run it locally
+## Development
 
-Open `index.html` in a browser, or start a small local server in the project folder:
+No build step and no dependencies for the web app – plain HTML, CSS and JavaScript.
+
+### Local web server
+
+Only needed for development – everyone else can just double-click `index.html` (see above).
+To serve the app locally, run this in the project folder:
 
 ```bash
 python3 -m http.server 8765
@@ -88,7 +108,7 @@ python3 -m http.server 8765
 
 Then open <http://localhost:8765>.
 
-### Optional: Mac app (Tauri 2)
+### Mac app (Tauri 2, optional)
 
 The same web app in a native window that can write LUTs directly to your SD card. Requires
 Xcode Command Line Tools, Rust and Node:
@@ -103,10 +123,6 @@ npm run app:build
 
 The app ends up in `src-tauri/target/release/bundle/`. It is not signed; on first launch use
 right-click › Open.
-
-## Development
-
-No build step and no dependencies for the web app – plain HTML, CSS and JavaScript.
 
 ```bash
 node tests/run.js

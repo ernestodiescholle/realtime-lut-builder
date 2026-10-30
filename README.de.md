@@ -11,6 +11,23 @@ Läuft komplett lokal im Browser. Keine Installation, keine Cloud.
 <p align="center"><img src="docs/examples/teal-orange-golden-hour.jpg" width="820" alt="Teal & Orange, direkt aus der Kamera"></p>
 <p align="center"><sub>Teal &amp; Orange – JPEG direkt aus der LUMIX S9 mit Real Time LUT</sub></p>
 
+## Loslegen – ohne Installation
+
+**Am einfachsten im Browser.** Diese Seite öffnen:
+
+### 👉 [ernestodiescholle.github.io/realtime-lut-builder](https://ernestodiescholle.github.io/realtime-lut-builder/)
+
+am Computer (Chrome, Safari, Edge oder Firefox). Fertig: kein Download, kein Konto, keine Anmeldung.
+Deine Fotos werden auf deinem eigenen Computer verarbeitet und nie hochgeladen.
+
+**Lieber offline nutzen?**
+
+1. Auf der [Repo-Startseite](https://github.com/ernestodiescholle/realtime-lut-builder) auf den grünen Button **Code** › **Download ZIP** klicken.
+2. Die ZIP-Datei entpacken.
+3. `index.html` doppelklicken – die App öffnet sich im Browser und läuft ohne Internet.
+
+Für beide Wege braucht man kein GitHub-Konto. Danach weiter mit dem [Ablauf](#ablauf).
+
 ## Beispiele
 
 Direkt aus der Kamera (LUMIX S9, Real Time LUT, JPEG, ohne Nachbearbeitung):
@@ -29,16 +46,6 @@ Gezeigt mit dem eingebauten synthetischen V-Log-Testbild und dem Look *Teal & Or
 | <img src="docs/screenshots/curve.png" width="400" alt="Tone curve and white balance"><br><sub>**Tonkurve & Weißabgleich** – Punktkurven (Luminanz, RGB), Weißabgleich wie an der Kamera</sub> | <img src="docs/screenshots/grading.png" width="400" alt="Colour grading"><br><sub>**Farbe** – Sättigung, Hautton-Schutz, Farbmischer, Color-Grading-Räder</sub> |
 | <img src="docs/screenshots/split.png" width="400" alt="Before/after split view"><br><sub>**Geteilte Ansicht** – links V-Log, rechts der Look</sub> | <img src="docs/screenshots/match.png" width="400" alt="Match tab"><br><sub>**Abgleich** – Referenzbild-Abgleich und Kamera-Vergleich</sub> |
 | <img src="docs/screenshots/export.png" width="400" alt="Export tab"><br><sub>**Export** – kamerafertige `.cube`, Video-Variante, Rezeptkarte</sub> | |
-
-## Starten
-
-Am einfachsten über die Webseite des Projekts (Link im englischen README). Lokal: `index.html` per Doppelklick im Browser öffnen, oder im Projektordner einen lokalen Server starten:
-
-```bash
-python3 -m http.server 8765
-```
-
-Dann <http://localhost:8765> öffnen.
 
 ## Ablauf
 
@@ -148,7 +155,18 @@ Oben rechts lässt sich zwischen **Deutsch** und **English** umschalten. Die Wah
 beim ersten Start richtet sich die Sprache nach dem Browser. Übersetzungen stehen in
 `js/i18n.js`, die englischen Look-Texte direkt in `js/presets.js`.
 
-## Mac-App (Tauri 2)
+## Lokaler Webserver (für Entwicklung)
+
+Nur zum Entwickeln nötig – zum Nutzen reicht der Doppelklick auf `index.html` (siehe oben).
+Im Projektordner:
+
+```bash
+python3 -m http.server 8765
+```
+
+Dann <http://localhost:8765> öffnen.
+
+## Mac-App (Tauri 2, optional)
 
 Die App lässt sich als native Mac-App verpacken. Voraussetzungen: Xcode Command Line Tools,
 Rust (rustup) und Node. Dann:
