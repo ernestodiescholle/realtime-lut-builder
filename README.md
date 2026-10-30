@@ -11,6 +11,17 @@ leave your computer.
 
 **Try it:** https://ernestodiescholle.github.io/realtime-lut-builder/
 
+<p align="center"><img src="docs/examples/teal-orange-golden-hour.jpg" width="820" alt="Teal & Orange, straight out of camera"></p>
+<p align="center"><sub>Teal &amp; Orange – JPEG straight out of the LUMIX S9 with Real Time LUT</sub></p>
+
+## Examples
+
+Straight out of the camera (LUMIX S9, Real Time LUT, JPEG, no editing):
+
+| Teal & Orange | Neon Night | Cinema Print Warm |
+|:---:|:---:|:---:|
+| <img src="docs/examples/teal-orange.jpg" width="260" alt="Teal & Orange"> | <img src="docs/examples/neon-night.jpg" width="260" alt="Neon Night"> | <img src="docs/examples/cinema-print-warm.jpg" width="260" alt="Cinema Print Warm"> |
+
 ## Features
 
 - **57 looks to start from:** camera classics, colour negative, slide, cinema, popular styles

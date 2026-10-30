@@ -8,6 +8,17 @@ Dieselben LUTs funktionieren auch für Video.
 
 Läuft komplett lokal im Browser. Keine Installation, keine Cloud.
 
+<p align="center"><img src="docs/examples/teal-orange-golden-hour.jpg" width="820" alt="Teal & Orange, direkt aus der Kamera"></p>
+<p align="center"><sub>Teal &amp; Orange – JPEG direkt aus der LUMIX S9 mit Real Time LUT</sub></p>
+
+## Beispiele
+
+Direkt aus der Kamera (LUMIX S9, Real Time LUT, JPEG, ohne Nachbearbeitung):
+
+| Teal & Orange | Neon Nacht | Kino-Print warm |
+|:---:|:---:|:---:|
+| <img src="docs/examples/teal-orange.jpg" width="260" alt="Teal & Orange"> | <img src="docs/examples/neon-night.jpg" width="260" alt="Neon Nacht"> | <img src="docs/examples/cinema-print-warm.jpg" width="260" alt="Kino-Print warm"> |
+
 ## Starten
 
 Am einfachsten über die Webseite des Projekts (Link im englischen README). Lokal: `index.html` per Doppelklick im Browser öffnen, oder im Projektordner einen lokalen Server starten:
