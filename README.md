@@ -22,6 +22,17 @@ Straight out of the camera (LUMIX S9, Real Time LUT, JPEG, no editing):
 |:---:|:---:|:---:|
 | <img src="docs/examples/teal-orange.jpg" width="260" alt="Teal & Orange"> | <img src="docs/examples/neon-night.jpg" width="260" alt="Neon Night"> | <img src="docs/examples/cinema-print-warm.jpg" width="260" alt="Cinema Print Warm"> |
 
+## Screenshots
+
+Shown with the built-in synthetic V-Log test image and the *Teal & Orange* look.
+
+| | |
+|:---:|:---:|
+| <img src="docs/screenshots/looks.png" width="400" alt="Looks tab"><br><sub>**Looks** – 57 starting looks, hover to preview</sub> | <img src="docs/screenshots/edit.png" width="400" alt="Edit tab"><br><sub>**Edit** – light, contrast, highlights, shadows</sub> |
+| <img src="docs/screenshots/curve.png" width="400" alt="Tone curve and white balance"><br><sub>**Tone curve & white balance** – point curves (luminance, RGB), camera-style WB</sub> | <img src="docs/screenshots/grading.png" width="400" alt="Colour grading"><br><sub>**Colour** – saturation, skin tone protection, colour mixer, grading wheels</sub> |
+| <img src="docs/screenshots/split.png" width="400" alt="Before/after split view"><br><sub>**Split view** – V-Log before, look after</sub> | <img src="docs/screenshots/match.png" width="400" alt="Match tab"><br><sub>**Match** – reference match and camera comparison</sub> |
+| <img src="docs/screenshots/export.png" width="400" alt="Export tab"><br><sub>**Export** – camera-ready `.cube`, video variant, recipe card</sub> | |
+
 ## Features
 
 - **57 looks to start from:** camera classics, colour negative, slide, cinema, popular styles

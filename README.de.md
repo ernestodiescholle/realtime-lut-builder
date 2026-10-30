@@ -19,6 +19,17 @@ Direkt aus der Kamera (LUMIX S9, Real Time LUT, JPEG, ohne Nachbearbeitung):
 |:---:|:---:|:---:|
 | <img src="docs/examples/teal-orange.jpg" width="260" alt="Teal & Orange"> | <img src="docs/examples/neon-night.jpg" width="260" alt="Neon Nacht"> | <img src="docs/examples/cinema-print-warm.jpg" width="260" alt="Kino-Print warm"> |
 
+## Screenshots
+
+Gezeigt mit dem eingebauten synthetischen V-Log-Testbild und dem Look *Teal & Orange* (englische Oberfläche, umschaltbar auf Deutsch).
+
+| | |
+|:---:|:---:|
+| <img src="docs/screenshots/looks.png" width="400" alt="Looks tab"><br><sub>**Looks** – 57 Start-Looks, Vorschau beim Darüberfahren</sub> | <img src="docs/screenshots/edit.png" width="400" alt="Edit tab"><br><sub>**Bearbeiten** – Licht, Kontrast, Lichter, Schatten</sub> |
+| <img src="docs/screenshots/curve.png" width="400" alt="Tone curve and white balance"><br><sub>**Tonkurve & Weißabgleich** – Punktkurven (Luminanz, RGB), Weißabgleich wie an der Kamera</sub> | <img src="docs/screenshots/grading.png" width="400" alt="Colour grading"><br><sub>**Farbe** – Sättigung, Hautton-Schutz, Farbmischer, Color-Grading-Räder</sub> |
+| <img src="docs/screenshots/split.png" width="400" alt="Before/after split view"><br><sub>**Geteilte Ansicht** – links V-Log, rechts der Look</sub> | <img src="docs/screenshots/match.png" width="400" alt="Match tab"><br><sub>**Abgleich** – Referenzbild-Abgleich und Kamera-Vergleich</sub> |
+| <img src="docs/screenshots/export.png" width="400" alt="Export tab"><br><sub>**Export** – kamerafertige `.cube`, Video-Variante, Rezeptkarte</sub> | |
+
 ## Starten
 
 Am einfachsten über die Webseite des Projekts (Link im englischen README). Lokal: `index.html` per Doppelklick im Browser öffnen, oder im Projektordner einen lokalen Server starten:
