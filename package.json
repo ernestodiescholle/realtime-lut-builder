@@ -1,0 +1,17 @@
+{
+  "name": "realtime-lut-builder",
+  "version": "1.0.0",
+  "private": true,
+  "license": "MIT",
+  "author": "ernestodiescholle",
+  "description": "Create .cube LUTs for the in-camera Real Time LUT feature (V-Log). Web app + optional Mac app via Tauri.",
+  "scripts": {
+    "test": "node tests/run.js",
+    "dist": "sh scripts/build-dist.sh",
+    "app:dev": "tauri dev",
+    "app:build": "tauri build"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.0.0"
+  }
+}

@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LUT Generator S9</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Symbole -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="i-edit" viewBox="0 0 24 24"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></symbol>
+      <symbol id="i-looks" viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></symbol>
+      <symbol id="i-export" viewBox="0 0 24 24"><path d="M12 4v11M8 8l4-4 4 4"/><path d="M5 14v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4"/></symbol>
+      <symbol id="i-saved" viewBox="0 0 24 24"><path d="M7 4h10v16l-5-4-5 4z"/></symbol>
+      <symbol id="i-import" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 16l5-5 4 4 3-3 6 6"/><circle cx="16" cy="9" r="1.5"/></symbol>
+      <symbol id="i-split" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M12 3v18"/></symbol>
+      <symbol id="i-after" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 15l3-3 2 2 2.5-2.5L17 14"/></symbol>
+      <symbol id="i-before" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 12h10" stroke-dasharray="2 2"/></symbol>
+      <symbol id="i-reset" viewBox="0 0 24 24"><path d="M5 12a7 7 0 1 0 2-4.9"/><path d="M5 4v4h4"/></symbol>
+      <symbol id="i-chev" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+      <symbol id="i-chart" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 10h16M4 15h16M9.3 4v16M14.6 4v16"/></symbol>
+      <symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 14l-4-4 4-4"/><path d="M5 10h9a5 5 0 0 1 0 10h-3"/></symbol>
+      <symbol id="i-redo" viewBox="0 0 24 24"><path d="M15 14l4-4-4-4"/><path d="M19 10h-9a5 5 0 0 0 0 10h3"/></symbol>
+      <symbol id="i-match" viewBox="0 0 24 24"><rect x="3" y="4" width="8" height="16" rx="1.5"/><rect x="13" y="4" width="8" height="16" rx="1.5"/><path d="M11 12h2"/></symbol>
+      <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3.5l2.6 5.6 6.1.7-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6L3.3 9.8l6.1-.7z"/></symbol>
+      <symbol id="i-loupe" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l5 5M8.5 11h5M11 8.5v5"/></symbol>
+      <symbol id="i-ab" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M12 5v14"/><path d="M6.5 15l1.3-5 1.3 5M6.9 13.5h1.8"/><path d="M15 10h2a1.2 1.2 0 0 1 0 2.4h-2zM15 12.4h2.3a1.3 1.3 0 0 1 0 2.6H15z"/></symbol>
+      <symbol id="i-aperture" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3l3.5 9M21 12l-9 3.5M12 21l-3.5-9M3 12l9-3.5"/></symbol>
+    </defs>
+  </svg>
+
+  <header class="topbar">
+    <div class="brand">
+      <svg class="ic logo"><use href="#i-aperture"/></svg>
+      <span class="app">LUT Generator</span>
+      <span class="sep"></span>
+      <span class="doc" id="docName">Testbild</span>
+    </div>
+    <div class="top-actions">
+      <div class="seg small" id="langSwitch" title="Sprache / Language">
+        <button data-lang="de">DE</button>
+        <button data-lang="en">EN</button>
+      </div>
+      <button class="icon-btn" id="btnUndo" title="Rückgängig (⌘Z)" disabled><svg class="ic"><use href="#i-undo"/></svg></button>
+      <button class="icon-btn" id="btnRedo" title="Wiederholen (⇧⌘Z)" disabled><svg class="ic"><use href="#i-redo"/></svg></button>
+      <label class="btn ghost" title="V-Log-JPEGs laden">
+        <svg class="ic"><use href="#i-import"/></svg><span>Importieren</span>
+        <input id="fileInput" type="file" accept="image/jpeg,image/png,image/webp" multiple hidden>
+      </label>
+      <button class="btn primary" id="btnOpenExport"><svg class="ic"><use href="#i-export"/></svg><span>Exportieren</span></button>
+    </div>
+  </header>
+
+  <div class="workspace">
+    <main class="canvas-area" id="viewer">
+      <div class="stage" id="stage">
+        <canvas id="view"></canvas>
+        <div class="split-line" id="splitLine"><span class="knob"></span></div>
+        <div class="tag tag-left" id="tagBefore">Vorher · V-Log</div>
+        <div class="tag tag-right" id="tagAfter">Nachher</div>
+      </div>
+      <div class="hint" id="hint"></div>
+      <div class="drop" id="drop"><svg class="ic big"><use href="#i-import"/></svg>V-Log-JPEGs hier ablegen</div>
+    </main>
+
+    <aside class="panel" id="panel">
+      <!-- Bearbeiten -->
+      <section class="tab" data-tab="edit">
+        <div class="histo-wrap"><canvas id="histo" width="600" height="150"></canvas></div>
+
+        <div class="profile-row">
+          <button class="profile" id="profileBtn" title="Looks durchsuchen">
+            <span class="muted">Look</span>
+            <span id="profileName">Neutral</span>
+            <svg class="ic sm"><use href="#i-looks"/></svg>
+          </button>
+          <div class="seg small" id="colorMode">
+            <button data-mono="0" class="active">Farbe</button>
+            <button data-mono="1">S/W</button>
+          </div>
+        </div>
+        <div class="base-row">
+          <label for="baseStyle" class="muted">Basis-Bildstil</label>
+          <select id="baseStyle" title="Bildstil der Kamera, auf den die LUT aufsetzt (Tag im .cube)"></select>
+          <span class="mode-badge" id="baseMode">exakt</span>
+        </div>
+        <p class="base-note" id="baseNote" hidden></p>
+
+        <div class="section" data-sec="light">
+          <div class="sec-head" tabindex="0" role="button"><svg class="ic chev"><use href="#i-chev"/></svg><span>Licht</span>
+            <button class="icon-btn" data-reset="light" title="Licht zurücksetzen"><svg class="ic sm"><use href="#i-reset"/></svg></button></div>
+          <div class="sec-body">
+            <div id="grpLight"></div>
+            <button class="sub-toggle" id="curveToggle"><svg class="ic chev sm"><use href="#i-chev"/></svg>Tonkurve</button>
+            <div class="curve-wrap" id="curveWrap">
+              <div class="curve-head">
+                <div class="chips curve-chans" id="curveChans">
+                  <button class="chip active" data-chan="lum">Luminanz</button>
+                  <button class="chip" data-chan="r"><span class="swatch" style="background:#d65a5a"></span>Rot</button>
+                  <button class="chip" data-chan="g"><span class="swatch" style="background:#5cc06a"></span>Grün</button>
+                  <button class="chip" data-chan="b"><span class="swatch" style="background:#5a8fe6"></span>Blau</button>
+                </div>
+                <button class="icon-btn" id="curveReset" title="Alle Kurven zurücksetzen"><svg class="ic sm"><use href="#i-reset"/></svg></button>
+              </div>
+              <canvas id="curve" width="560" height="360"></canvas>
+              <p class="muted small curve-hint">Klick setzt einen Punkt, Ziehen verschiebt ihn, Doppelklick entfernt ihn. Die Kurve wirkt zusätzlich zu den Reglern.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="section" data-sec="color">
+          <div class="sec-head" tabindex="0" role="button"><svg class="ic chev"><use href="#i-chev"/></svg><span>Farbe</span>
+            <button class="icon-btn" data-reset="color" title="Farbe zurücksetzen"><svg class="ic sm"><use href="#i-reset"/></svg></button></div>
+          <div class="sec-body">
+            <div class="sub-label">Weißabgleich</div>
+            <div class="chips wb-tools" id="wbPresets">
+              <button class="chip" data-k="0" title="Weißabgleich der Aufnahme beibehalten">Wie aufgenommen</button>
+              <button class="chip" data-k="5600" title="☀ 5600 K">Tageslicht</button>
+              <button class="chip" data-k="6500" title="☁ 6500 K">Bewölkt</button>
+              <button class="chip" data-k="7500" title="7500 K" data-en="Shade">Schatten</button>
+              <button class="chip" data-k="3200" title="3200 K">Glühlampe</button>
+              <button class="chip" data-k="4000" title="4000 K">Leuchtstoff</button>
+            </div>
+            <div class="chips wb-tools">
+              <button class="chip" id="wbPick" title="Dann auf eine neutrale Fläche im Bild klicken (Graukarte, weißes Papier, Asphalt)">Pipette</button>
+              <button class="chip" id="wbAuto" title="Schätzt den Weißabgleich aus dem ganzen Bild">Auto</button>
+            </div>
+            <div id="grpWb"></div>
+            <div id="grpColor"></div>
+            <div class="color-only">
+              <button class="sub-toggle" id="mixerToggle"><svg class="ic chev sm"><use href="#i-chev"/></svg>Farbmischer</button>
+              <div class="mixer" id="mixer">
+                <div class="dots" id="bandDots"></div>
+                <div id="grpHsl"></div>
+              </div>
+            </div>
+            <div class="mono-only">
+              <div class="sub-label">Schwarzweiß-Filter</div>
+              <div class="chips" id="monoFilters"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section" data-sec="grading">
+          <div class="sec-head" tabindex="0" role="button"><svg class="ic chev"><use href="#i-chev"/></svg><span>Color Grading</span>
+            <button class="icon-btn" data-reset="grading" title="Color Grading zurücksetzen"><svg class="ic sm"><use href="#i-reset"/></svg></button></div>
+          <div class="sec-body">
+            <div class="wheels">
+              <div class="wheel-box"><div class="sub-label">Schatten</div><canvas class="wheel" id="wheelShadow" width="240" height="240"></canvas><div class="wheel-val" id="wheelShadowVal"></div></div>
+              <div class="wheel-box"><div class="sub-label">Mitteltöne</div><canvas class="wheel" id="wheelMid" width="240" height="240"></canvas><div class="wheel-val" id="wheelMidVal"></div></div>
+              <div class="wheel-box"><div class="sub-label">Lichter</div><canvas class="wheel" id="wheelHigh" width="240" height="240"></canvas><div class="wheel-val" id="wheelHighVal"></div></div>
+            </div>
+            <div id="grpGrading"></div>
+          </div>
+        </div>
+
+        <div class="section" data-sec="preview">
+          <div class="sec-head" tabindex="0" role="button"><svg class="ic chev"><use href="#i-chev"/></svg><span>Nur Vorschau <span class="muted">· nicht in der LUT</span></span>
+            <button class="icon-btn" data-reset="preview" title="Vorschau-Effekte zurücksetzen"><svg class="ic sm"><use href="#i-reset"/></svg></button></div>
+          <div class="sec-body">
+            <p class="muted small">Vignette und Körnung kann eine LUT nicht enthalten. Hier lässt sich der Gesamteindruck mit den Kamera-Einstellungen aus der Rezeptkarte abschätzen.</p>
+            <div id="grpPreview"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Looks -->
+      <section class="tab" data-tab="looks" hidden>
+        <div class="tab-title">Looks</div>
+        <input id="lookSearch" class="search" type="search" placeholder="Looks durchsuchen …" autocomplete="off">
+        <p class="muted small">Mit der Maus über einen Look fahren zeigt ihn in der Vorschau. Klick übernimmt ihn, der Stern merkt ihn als Favorit.</p>
+        <div id="presetGrid" class="preset-grid"></div>
+      </section>
+
+      <!-- Abgleich -->
+      <section class="tab" data-tab="match" hidden>
+        <div class="tab-title">Referenzbild-Abgleich</div>
+        <p class="muted small">Ein fertiges Bild, dessen Stimmung dir gefällt, wird mit dem aktiven V-Log-Bild im Filmstreifen verglichen. Die App schlägt dazu Reglerwerte vor, die du danach feinjustierst.</p>
+        <div class="match-grid">
+          <div class="match-box">
+            <div class="sub-label">Referenz (fertiger Look)</div>
+            <label class="match-drop" id="refDrop">
+              <canvas id="refThumb" width="240" height="160" hidden></canvas>
+              <span id="refEmpty">Bilder wählen oder hierher ziehen (mehrere möglich)</span>
+              <input id="refInput" type="file" accept="image/jpeg,image/png,image/webp" multiple hidden>
+              <span class="badge" id="refCount" hidden></span>
+            </label>
+          </div>
+          <div class="match-box">
+            <div class="sub-label">Eigenes V-Log-Bild</div>
+            <div class="match-drop static"><canvas id="srcThumb" width="240" height="160"></canvas></div>
+          </div>
+        </div>
+        <label class="switch"><input type="checkbox" id="matchFromCurrent"><span class="track"></span>
+          <span>Vom aktuellen Look aus starten <span class="muted">· sonst von Neutral</span></span></label>
+        <button class="btn primary wide" id="btnMatch" disabled><svg class="ic"><use href="#i-match"/></svg>Look vorschlagen</button>
+        <div class="progress" id="matchProgress" hidden><div class="bar"></div></div>
+        <p class="muted small" id="matchNote">Verglichen werden Tonwerte, Farbstich und Sättigung, nicht das Motiv. Ähnliche Motive und ähnliches Licht ergeben die beste Annäherung.</p>
+
+        <div class="tab-title sm">Kamera-Vergleich</div>
+        <p class="muted small">Prüft, ob die Vorschau zur Kamera passt: dieselbe Szene einmal im Bildstil V-Log (aktives Bild im Filmstreifen) und einmal mit der geladenen LUT fotografiert. Das Kamera-JPEG hier laden, die App rendert die Vorschau mit dem aktuellen Look und misst die Abweichung.</p>
+        <div class="match-grid">
+          <div class="match-box">
+            <div class="sub-label">Kamera-JPEG mit LUT</div>
+            <label class="match-drop" id="camDrop">
+              <canvas id="camThumb" width="240" height="160" hidden></canvas>
+              <span id="camEmpty">Kamera-JPEG wählen oder hierher ziehen</span>
+              <input id="camInput" type="file" accept="image/jpeg,image/png,image/webp" hidden>
+            </label>
+          </div>
+          <div class="match-box">
+            <div class="sub-label">Vorschau der App</div>
+            <div class="match-drop static"><canvas id="camPreview" width="240" height="160"></canvas></div>
+          </div>
+        </div>
+        <button class="btn wide" id="btnCamCompare" disabled>Vergleichen</button>
+        <div class="cam-result" id="camResult" hidden>
+          <div class="match-grid">
+            <div class="match-box"><div class="sub-label">Abweichung (hell = groß)</div><div class="match-drop static"><canvas id="camDiff" width="240" height="160"></canvas></div></div>
+            <div class="match-box"><div class="sub-label">Messung</div><div id="camStats" class="cam-stats"></div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Export -->
+      <section class="tab" data-tab="export" hidden>
+        <div class="tab-title">Export für die S9</div>
+        <label class="field">Dateiname <span class="muted">· max. 8 Zeichen, A–Z/0–9</span>
+          <input id="fileName" maxlength="8" autocomplete="off" spellcheck="false">
+        </label>
+        <label class="field">Titel in der LUT
+          <input id="lutTitle" maxlength="40" autocomplete="off">
+        </label>
+        <label class="switch"><input type="checkbox" id="videoToo" checked><span class="track"></span>
+          <span>Video-Variante mitexportieren <span class="muted">· weicher, mehr Reserve in den Lichtern</span></span></label>
+        <label class="switch"><input type="checkbox" id="zipToo" checked><span class="track"></span>
+          <span>Als ZIP-Paket <span class="muted">· LUTs, Rezeptkarte und Vorschaubild in einer Datei</span></span></label>
+        <button class="btn primary wide" id="btnExport"><svg class="ic"><use href="#i-export"/></svg>LUT + Rezeptkarte exportieren</button>
+        <ol class="steps">
+          <li>Die .cube-Datei ins Hauptverzeichnis der SD-Karte kopieren.</li>
+          <li>Kamera: MENU › Individual › Bildqualität › LUT-Bibliothek › Laden (oder App LUMIX Lab).</li>
+          <li>Den Bildstil „Real Time LUT“ wählen und mit der [LUT]-Taste den Look aktivieren.</li>
+        </ol>
+        <div class="tab-title sm">Rezeptkarte</div>
+        <div id="recipe" class="recipe"></div>
+        <p class="credits">LUT Generator · made by <a href="https://github.com/ernestodiescholle" target="_blank" rel="noopener">ernestodiescholle</a> ·
+          <a href="https://github.com/ernestodiescholle/realtime-lut-builder" target="_blank" rel="noopener">GitHub</a> · MIT-Lizenz</p>
+      </section>
+
+      <!-- Meine Looks -->
+      <section class="tab" data-tab="saved" hidden>
+        <div class="tab-title">Meine Looks</div>
+        <div class="row">
+          <input id="saveName" placeholder="Name des Looks" maxlength="40">
+          <button class="btn" id="btnSave">Speichern</button>
+        </div>
+        <ul id="savedList" class="saved"></ul>
+        <div class="row">
+          <button class="btn ghost" id="btnExportJson">Alle als Datei sichern</button>
+          <label class="btn ghost">Datei laden<input id="jsonInput" type="file" accept="application/json,.json" hidden></label>
+        </div>
+      </section>
+    </aside>
+
+    <nav class="rail" id="rail">
+      <button data-tab="edit" class="active" title="Bearbeiten"><svg class="ic"><use href="#i-edit"/></svg><span>Bearbeiten</span></button>
+      <button data-tab="looks" title="Looks"><svg class="ic"><use href="#i-looks"/></svg><span>Looks</span></button>
+      <button data-tab="match" title="Referenzbild-Abgleich"><svg class="ic"><use href="#i-match"/></svg><span>Abgleich</span></button>
+      <button data-tab="saved" title="Meine Looks"><svg class="ic"><use href="#i-saved"/></svg><span>Meine</span></button>
+      <button data-tab="export" title="Export"><svg class="ic"><use href="#i-export"/></svg><span>Export</span></button>
+    </nav>
+  </div>
+
+  <footer class="bottombar">
+    <div class="seg" id="viewMode">
+      <button data-mode="look" class="active" title="Bearbeitet (\)"><svg class="ic sm"><use href="#i-after"/></svg><span>Bearbeitet</span></button>
+      <button data-mode="split" title="Vorher/Nachher geteilt (Y)"><svg class="ic sm"><use href="#i-split"/></svg><span>Geteilt</span></button>
+      <button data-mode="orig" title="Original V-Log (\)"><svg class="ic sm"><use href="#i-before"/></svg><span>Original</span></button>
+      <button data-mode="b" id="modeB" title="Gemerkter Look B (B)" disabled><svg class="ic sm"><use href="#i-ab"/></svg><span>B</span></button>
+    </div>
+    <button class="icon-btn" id="btnMarkB" title="Aktuellen Look als B merken (für den A/B-Vergleich)"><svg class="ic"><use href="#i-saved"/></svg></button>
+    <button class="icon-btn" id="btnLoupe" title="1:1-Ansicht (Z)"><svg class="ic"><use href="#i-loupe"/></svg></button>
+    <div class="filmstrip" id="filmstrip"></div>
+    <label class="icon-btn add" title="Weitere Bilder hinzufügen">
+      <svg class="ic"><use href="#i-plus"/></svg>
+      <input id="fileInput2" type="file" accept="image/jpeg,image/png,image/webp" multiple hidden>
+    </label>
+  </footer>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="js/i18n.js"></script>
+  <script src="js/color.js"></script>
+  <script src="js/grade.js"></script>
+  <script src="js/presets.js"></script>
+  <script src="js/testimage.js"></script>
+  <script src="js/match.js"></script>
+  <script src="js/zip.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
