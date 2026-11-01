@@ -440,6 +440,11 @@ check('.cube: R-Achse läuft zuerst', eR[0] > eR[2] && eB[2] > eB[0], [eR, eB]);
 check('Name: Umlaute', G.sanitizeFileName('Größe Ü') === 'GROESSEU', G.sanitizeFileName('Größe Ü'));
 check('Name: max. 8', G.sanitizeFileName('Kunstlicht800') === 'KUNSTLIC');
 check('Name: leer', G.sanitizeFileName('!!') === 'MYLUT');
+{
+  const stems = P.map((pr) => G.lutFileNames(pr.file, 'VLOG').photo);
+  const dup = stems.filter((x, i) => stems.indexOf(x) !== i);
+  check('Export-Dateinamen aller Looks eindeutig (6 Zeichen + -V)', dup.length === 0, dup);
+}
 const fnV = G.lutFileNames('Teal & Orange', 'VLOG'), fnN = G.lutFileNames('tealorng', 'NAT');
 check('Dateiname V-Log: -V, max. 8', fnV.photo === 'TEALOR-V' && fnV.video === 'TEALOM-V', fnV);
 check('Dateiname Natural: -N, max. 8', fnN.photo === 'TEALOR-N' && fnN.video === 'TEALOM-N', fnN);

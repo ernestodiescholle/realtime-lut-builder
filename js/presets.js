@@ -16,8 +16,9 @@
   const SLIDE = 'Dia & Kräftig';
   const CINE = 'Kino';
   const POPULAR = 'Beliebte Stile';
+  const EDIT = 'Editorial';
   const BW = 'Schwarzweiß';
-  const GROUP_ORDER = [BASE, CLASSIC, NEG, SLIDE, CINE, POPULAR, BW];
+  const GROUP_ORDER = [BASE, CLASSIC, NEG, SLIDE, CINE, POPULAR, EDIT, BW];
 
   const PRESETS = [
     {
@@ -543,13 +544,13 @@
       recipe: { sharpness: '+1', grain: 'Schwach', note: 'Für alle Motive.' },
     },
     {
-      id: 'bwfinered', name: 'SW Fein + Rotfilter', file: 'BWFINER', group: BW,
+      id: 'bwfinered', name: 'SW Fein + Rotfilter', file: 'BWFROT', group: BW,
       desc: 'Dunkler Himmel, helle Haut, dramatisch.',
       params: { mono: true, monoFilter: 'red', contrast: 25, highlights: -5, shadows: -10 },
       recipe: { sharpness: '+1', grain: 'Schwach', note: 'Landschaft mit Wolken, Architektur.' },
     },
     {
-      id: 'bwfinegreen', name: 'SW Fein + Grünfilter', file: 'BWFINEG', group: BW,
+      id: 'bwfinegreen', name: 'SW Fein + Grünfilter', file: 'BWFGRN', group: BW,
       desc: 'Helles Laub, natürlich wirkende Hauttöne.',
       params: { mono: true, monoFilter: 'green', contrast: 18, highlights: -5, shadows: -5 },
       recipe: { sharpness: '+1', grain: 'Schwach', note: 'Porträts im Grünen, Wald.' },
@@ -610,6 +611,186 @@
         splitShadowHue: 285, splitShadowAmt: 12, splitHighHue: 70, splitHighAmt: 3,
       },
       recipe: { sharpness: '0', grain: 'Schwach', note: 'Landschaft, Architektur, Fine Art.' },
+    },
+    {
+      id: 'eveningsalon', name: 'Abendsalon', file: 'SALON', group: EDIT,
+      desc: 'Dunkel und warm wie ein Abend im Salon: tiefe Schatten, warme Mitten, kräftiger Kontrast.',
+      params: {
+        contrast: 80, highlights: 1, shadows: 16, tint: -1, saturation: -15, vibrance: -7, splitBalance: -4,
+        splitShadowHue: 129, splitShadowAmt: 25, splitMidHue: 104, splitMidAmt: 16, splitHighHue: 99, splitHighAmt: 17,
+        hsl: {
+          red: { h: 8, s: 2, l: -8 }, orange: { h: -3, s: -4, l: -12 }, yellow: { h: -10, l: -14 }, blue: { s: -17, l: -16 }, purple: { h: -1 }, magenta: { h: 4, s: -9, l: -8 },
+        },
+      },
+      recipe: { grain: 'Schwach', note: 'Innenräume mit warmem Licht, Abendstimmung. Eher knapp belichten.' },
+    },
+    {
+      id: 'silkwhite', name: 'Seidenweiß', file: 'SEIDE', group: EDIT,
+      desc: 'Hell und weich: cremige Weißtöne, sanfte Kontraste, zurückhaltende Farben.',
+      params: {
+        contrast: 44, highlights: -7, shadows: 12, whiteMatte: 7, temp: 1, saturation: 1, vibrance: 2, splitBalance: 4,
+        splitShadowHue: 300, splitShadowAmt: 11, splitMidHue: 74, splitMidAmt: 14, splitHighHue: 68, splitHighAmt: 21,
+        hsl: {
+          red: { h: -4, l: -2 }, orange: { h: -1, s: 2, l: -3 }, yellow: { h: -3, s: -8 }, green: { h: -4, s: 1 }, aqua: { h: -3 }, blue: { h: -1, s: -10 }, purple: { h: -2 }, magenta: { h: -4 },
+        },
+      },
+      recipe: { grain: 'Schwach', note: 'Brautkleider, helle Stoffe, Fensterlicht. Gern etwas reichlicher belichten.' },
+    },
+    {
+      id: 'fadedrose', name: 'Rosé matt', file: 'ROSEMT', group: EDIT,
+      desc: 'Matt und gedämpft: zarte Rosatöne, ruhiges Grün, weiche Schatten.',
+      params: {
+        contrast: 50, highlights: -35, shadows: 42, fade: 20, whiteMatte: 20, tint: 1, saturation: -10, vibrance: -4, splitBalance: 2,
+        splitHighHue: 33, splitHighAmt: 8,
+        hsl: {
+          red: { h: -6, s: -11, l: -9 }, orange: { h: 1, s: -8, l: -3 }, yellow: { h: -7, s: -38, l: -6 }, green: { h: -19, s: -38, l: -3 }, aqua: { h: 5, s: -20 }, blue: { h: 5, s: -39, l: 8 }, purple: { h: 4, s: -16 }, magenta: { h: 10, s: -9, l: -9 },
+        },
+      },
+      recipe: { grain: 'Aus', note: 'Blumen, Gärten, Fassaden mit Pflanzen.' },
+    },
+    {
+      id: 'amber', name: 'Bernstein', file: 'AMBER', group: EDIT,
+      desc: 'Warmes Gold und satte Farben, kräftiger Kontrast – wie Kerzenlicht in einem alten Saal.',
+      params: {
+        contrast: 75, highlights: -8, shadows: 4, whiteMatte: 4, temp: 3, tint: -2, saturation: -11, vibrance: -56, splitBalance: 9,
+        splitMidHue: 112, splitMidAmt: 55, splitHighHue: 78, splitHighAmt: 21,
+        hsl: {
+          red: { h: 23, s: 14, l: 28 }, orange: { l: 8 }, yellow: { h: -6, s: -28, l: 6 }, green: { h: -8, s: -22, l: -6 }, blue: { s: -19, l: 2 }, purple: { l: -1 }, magenta: { h: 14, s: -10, l: -4 },
+        },
+      },
+      recipe: { grain: 'Schwach', note: 'Innenräume mit Holz, Gold und warmem Licht.' },
+    },
+    {
+      id: 'linen', name: 'Leinen', file: 'LEINEN', group: EDIT,
+      desc: 'Natürlich und ruhig: sanft warm, weiche Kontraste, unaufdringliche Farben.',
+      params: {
+        contrast: 25, highlights: -14, shadows: 7, whiteMatte: 16, temp: 1, saturation: 5, vibrance: 3, splitBalance: 2,
+        splitShadowHue: 144, splitShadowAmt: 8, splitMidHue: 74, splitMidAmt: 12, splitHighHue: 71, splitHighAmt: 10,
+        hsl: {
+          red: { l: 18 }, orange: { l: 16 }, yellow: { h: 2, s: -6, l: 25 }, green: { h: 1, s: -40, l: 19 }, blue: { s: -10 },
+        },
+      },
+      recipe: { grain: 'Schwach', note: 'Porträts im Grünen, Alltag, wenn es natürlich bleiben soll.' },
+    },
+    {
+      id: 'crispclassic', name: 'Klassisch klar', file: 'KLAR', group: EDIT,
+      desc: 'Klar und sauber mit kräftigem Kontrast und neutralen Weißtönen.',
+      params: {
+        contrast: 80, highlights: 4, shadows: -47, fade: 19, temp: 1, saturation: 3, vibrance: 1, splitBalance: 2,
+        splitShadowHue: 86, splitShadowAmt: 3, splitMidHue: 59, splitMidAmt: 8, splitHighHue: 70, splitHighAmt: 11,
+        hsl: {
+          red: { h: -3, l: -1 }, orange: { h: -6, s: 2, l: -11 }, yellow: { h: -10, s: -8, l: -16 }, green: { h: -7, s: -11 }, aqua: { s: -8 }, blue: { s: -20 }, purple: { s: -2 }, magenta: { s: -4 },
+        },
+      },
+      recipe: { grain: 'Schwach', note: 'Architektur, Autos, Szenen mit viel Weiß und Schwarz.' },
+    },
+    {
+      id: 'forestmood', name: 'Waldgrün', file: 'WALD', group: EDIT,
+      desc: 'Dunkel und stimmungsvoll: sattes, tiefes Grün, gedämpfte Lichter, warme Haut.',
+      params: {
+        contrast: 2, highlights: -42, shadows: 45, fade: 10, whiteMatte: 42, temp: 9, tint: -8, saturation: -12, vibrance: -6, splitBalance: 7,
+        splitShadowHue: 263, splitShadowAmt: 22, splitMidHue: 48, splitMidAmt: 15, splitHighHue: 67, splitHighAmt: 23,
+        hsl: {
+          red: { h: -4, s: -5, l: -4 }, orange: { s: -8, l: -2 }, yellow: { h: -7, s: -37, l: -4 }, green: { h: -24, s: -44, l: -22 }, aqua: { h: 4, s: -21, l: -2 }, blue: { h: 4, s: -49, l: 10 }, purple: { h: 4, s: -16, l: -11 }, magenta: { h: 10, s: -9, l: -16 },
+        },
+      },
+      recipe: { grain: 'Mittel', note: 'Wald, Park, Porträts im Schatten von Bäumen.' },
+    },
+    {
+      id: 'eveningsun', name: 'Abendsonne', file: 'ABENDS', group: EDIT,
+      desc: 'Goldener Dunst: warme Beigetöne, weiche Lichter, sanfte Kontraste.',
+      params: {
+        contrast: 80, highlights: -51, shadows: 54, fade: 12, whiteMatte: 10, temp: 31, tint: -28, vibrance: 3, splitBalance: 4,
+        splitShadowHue: 265, splitShadowAmt: 27, splitMidHue: 89, splitMidAmt: 16, splitHighHue: 67, splitHighAmt: 24,
+        hsl: {
+          red: { h: -2, s: -5, l: 4 }, orange: { h: -2, s: 1, l: 2 }, yellow: { h: -8, s: -34, l: -2 }, green: { h: -19, s: -57 }, aqua: { h: 5, s: -20 }, blue: { h: 3, s: -39, l: 12 }, purple: { h: 4, s: -16 }, magenta: { h: 10, s: -9 },
+        },
+      },
+      recipe: { grain: 'Mittel', note: 'Gegenlicht bei tiefer Sonne, Sommerabende.' },
+    },
+    {
+      id: 'marble', name: 'Marmor', file: 'MARMOR', group: EDIT,
+      desc: 'Hell und luftig mit warmen Weißtönen und klaren Farben.',
+      params: {
+        contrast: 38, highlights: -36, shadows: 33, fade: 26, whiteMatte: 9, temp: -8, tint: -12, saturation: 5, vibrance: 7, splitBalance: 1,
+        splitShadowHue: 228, splitShadowAmt: 12, splitHighHue: 218, splitHighAmt: 3,
+        hsl: {
+          red: { h: 4, s: -11, l: 5 }, orange: { h: 5, s: -25, l: 23 }, yellow: { h: -5, s: -42, l: 9 }, green: { h: -3, s: -24, l: -17 }, aqua: { h: 11, s: -16, l: 6 }, blue: { h: 2, s: -21, l: 16 }, purple: { h: 7, s: -41 }, magenta: { h: 16, s: -40 },
+        },
+      },
+      recipe: { grain: 'Schwach', note: 'Helle Innenräume, Säle, Standesamt, Architektur in Weiß.' },
+    },
+    {
+      id: 'dramatic', name: 'Dramatisch', file: 'DRAMA', group: EDIT,
+      desc: 'Kräftiger Kontrast, satte Farben und tiefe Schatten für starke Bilder.',
+      params: {
+        contrast: 64, highlights: -36, shadows: 28, fade: 28, temp: 10, tint: -16, saturation: -15, vibrance: -7, splitBalance: 35,
+        splitShadowHue: 247, splitShadowAmt: 10, splitMidHue: 22, splitMidAmt: 9, splitHighHue: 33, splitHighAmt: 1,
+        hsl: {
+          red: { h: -4, s: -6, l: -4 }, orange: { h: 1, s: -7, l: -5 }, yellow: { h: -14, s: -42, l: -53 }, green: { h: -23, s: -38, l: -10 }, aqua: { h: 5, s: -20, l: 2 }, blue: { h: 4, s: -39, l: 10 }, purple: { h: 4, s: -16, l: -2 }, magenta: { h: 10, s: -9, l: -1 },
+        },
+      },
+      recipe: { grain: 'Mittel', note: 'Bewegung, Outdoor-Porträts, bewölkter Himmel.' },
+    },
+    {
+      id: 'beigeanalog', name: 'Beige analog', file: 'BEIGE', group: EDIT,
+      desc: 'Matter Filmlook: Beige statt Weiß, angehobene Schatten, gedämpfte Farben.',
+      params: {
+        highlights: -25, shadows: 34, fade: 24, whiteMatte: 11, temp: 19, tint: 2, saturation: 12, vibrance: 13, splitBalance: 52,
+        splitShadowHue: 46, splitShadowAmt: 15, splitMidHue: 70, splitMidAmt: 15, splitHighHue: 72, splitHighAmt: 13,
+        hsl: {
+          red: { h: -2, s: -10, l: -5 }, orange: { h: -1, s: -17, l: 28 }, yellow: { h: -12, s: -40, l: 13 }, green: { h: -28, s: -23, l: 18 }, aqua: { h: 13, s: -43, l: 16 }, blue: { h: -2, s: -34, l: -2 }, purple: { h: -8, s: -12 }, magenta: { h: -16, s: -17 },
+        },
+      },
+      recipe: { grain: 'Mittel', note: 'Hochzeiten, Porträts, Reisen mit Vintage-Gefühl.' },
+    },
+    {
+      id: 'honey', name: 'Honig', file: 'HONIG', group: EDIT,
+      desc: 'Warmes Gold und erdige Töne mit weichem Kontrast.',
+      params: {
+        contrast: 20, highlights: -34, shadows: 30, fade: 3, whiteMatte: 8, temp: 6, tint: -5, saturation: -12, vibrance: 2, splitBalance: -7,
+        splitShadowHue: 88, splitShadowAmt: 20, splitMidHue: 48, splitMidAmt: 14, splitHighHue: 69, splitHighAmt: 16,
+        hsl: {
+          red: { h: -7, s: 5, l: -18 }, orange: { h: -3, s: -14, l: 2 }, yellow: { h: -13, s: -50, l: -13 }, green: { h: -16, s: -37, l: 2 }, aqua: { h: -4, s: -34, l: -6 }, blue: { h: 3, s: -31, l: 6 }, purple: { h: 11, s: -42, l: -10 }, magenta: { h: 8, s: -36, l: -14 },
+        },
+      },
+      recipe: { grain: 'Schwach', note: 'Stadt, Straße, Herbst, warmes Tageslicht.' },
+    },
+    {
+      id: 'terracotta', name: 'Terrakotta', file: 'TERRA', group: EDIT,
+      desc: 'Warme Rottöne wie gebrannter Ton, satte Schatten, kräftige Haut.',
+      params: {
+        contrast: 6, highlights: -8, shadows: 47, fade: 32, whiteMatte: 4, temp: 6, tint: -6, saturation: 11, vibrance: 7, splitBalance: -3,
+        splitShadowHue: 245, splitShadowAmt: 6, splitMidHue: 74, splitMidAmt: 12, splitHighHue: 72, splitHighAmt: 13,
+        hsl: {
+          red: { s: -5, l: -13 }, orange: { h: -2, l: 9 }, yellow: { h: 1, s: -24 }, green: { h: -9, s: -17, l: 14 }, aqua: { h: -3, s: -36 }, blue: { s: -50, l: -8 }, purple: { h: -13, s: -46, l: 14 }, magenta: { h: -15, s: -48, l: 4 },
+        },
+      },
+      recipe: { grain: 'Mittel', note: 'Ziegel, Holz, Innenräume, Porträts mit warmem Licht.' },
+    },
+    {
+      id: 'sandstone', name: 'Sandstein', file: 'SAND', group: EDIT,
+      desc: 'Entsättigtes Beige, pastellige Farben und flache Kontraste.',
+      params: {
+        contrast: 41, highlights: -13, shadows: 27, fade: 22, whiteMatte: 16, temp: 13, tint: -5, saturation: 7, vibrance: -6, splitBalance: -2,
+        splitShadowHue: 48, splitShadowAmt: 12, splitMidHue: 55, splitMidAmt: 19, splitHighHue: 60, splitHighAmt: 14,
+        hsl: {
+          red: { h: 2, s: -9, l: 42 }, orange: { h: -1, s: -22, l: 42 }, yellow: { h: -16, s: -50, l: 20 }, green: { h: -28, s: -40, l: -2 }, aqua: { h: 2, s: 8, l: -11 }, blue: { h: -1, s: -44, l: -9 }, purple: { h: -18, s: -53, l: -19 }, magenta: { h: -4, s: -40, l: -11 },
+        },
+      },
+      recipe: { grain: 'Mittel', note: 'Landschaft in hellem Licht, Wüste, Strand, Reisen.' },
+    },
+    {
+      id: 'morningglow', name: 'Morgenlicht', file: 'MORGEN', group: EDIT,
+      desc: 'Hell und warm leuchtend: goldene Lichter, offene Schatten, weiche Haut.',
+      params: {
+        contrast: 46, highlights: -18, shadows: -12, fade: 21, whiteMatte: 8, temp: 5, tint: -1, vibrance: 45, splitBalance: 4,
+        splitShadowHue: 339, splitShadowAmt: 8, splitMidHue: 62, splitMidAmt: 17, splitHighHue: 37, splitHighAmt: 14,
+        hsl: {
+          red: { h: -1, s: -37, l: -12 }, orange: { h: -6, s: -30, l: -46 }, yellow: { h: -13, s: -52, l: -13 }, green: { s: -52, l: -30 }, aqua: { h: 4, s: -58 }, blue: { s: -46, l: 25 }, purple: { h: 1, s: -43, l: -4 }, magenta: { s: -43, l: -6 },
+        },
+      },
+      recipe: { grain: 'Mittel', note: 'Fensterlicht, Balkon, Morgenstimmung.' },
     },
   ];
 
@@ -673,8 +854,23 @@
     bwhigh: {"name": "B&W High Contrast", "desc": "Dramatic black and white with deep blacks and brilliant highlights (red filter).", "note": "Architecture, sunny street, cloudy skies."},
     bwmatte: {"name": "B&W Matte", "desc": "Soft, matte black and white with lifted blacks.", "note": "Portraits, calm subjects, interiors."},
     selenium: {"name": "Selenium Tone", "desc": "Black and white with cool violet shadows like a selenium-toned fibre print.", "note": "Landscape, architecture, fine art."},
+    eveningsalon: {"name": "Evening Salon", "desc": "Dark and warm like an evening in a salon: deep shadows, warm midtones, strong contrast.", "note": "Interiors with warm light, evening mood. Rather expose a little less."},
+    silkwhite: {"name": "Silk White", "desc": "Bright and soft: creamy whites, gentle contrast, restrained colours.", "note": "Wedding dresses, light fabrics, window light. Feel free to expose a little brighter."},
+    fadedrose: {"name": "Faded Rosé", "desc": "Matte and muted: delicate pinks, calm greens, soft shadows.", "note": "Flowers, gardens, facades with plants."},
+    amber: {"name": "Amber", "desc": "Warm gold and rich colours, strong contrast – like candlelight in an old hall.", "note": "Interiors with wood, gold and warm light."},
+    linen: {"name": "Linen", "desc": "Natural and calm: gently warm, soft contrast, unobtrusive colours.", "note": "Portraits in greenery, everyday life, when it should stay natural."},
+    crispclassic: {"name": "Crisp Classic", "desc": "Clear and clean with strong contrast and neutral whites.", "note": "Architecture, cars, scenes with lots of white and black."},
+    forestmood: {"name": "Forest Mood", "desc": "Dark and moody: rich, deep greens, subdued highlights, warm skin.", "note": "Forest, park, portraits in the shade of trees."},
+    eveningsun: {"name": "Evening Sun", "desc": "Golden haze: warm beige tones, soft highlights, gentle contrast.", "note": "Backlight with a low sun, summer evenings."},
+    marble: {"name": "Marble", "desc": "Bright and airy with warm whites and clear colours.", "note": "Bright interiors, halls, registry offices, white architecture."},
+    dramatic: {"name": "Dramatic", "desc": "Strong contrast, rich colours and deep shadows for bold images.", "note": "Movement, outdoor portraits, cloudy skies."},
+    beigeanalog: {"name": "Beige Analog", "desc": "Matte film look: beige instead of white, lifted shadows, muted colours.", "note": "Weddings, portraits, travel with a vintage feel."},
+    honey: {"name": "Honey", "desc": "Warm gold and earthy tones with soft contrast.", "note": "City, street, autumn, warm daylight."},
+    terracotta: {"name": "Terracotta", "desc": "Warm reds like fired clay, rich shadows, strong skin tones.", "note": "Brick, wood, interiors, portraits in warm light."},
+    sandstone: {"name": "Sandstone", "desc": "Desaturated beige, pastel colours and flat contrast.", "note": "Landscape in bright light, desert, beach, travel."},
+    morningglow: {"name": "Morning Glow", "desc": "Bright and warmly glowing: golden highlights, open shadows, soft skin.", "note": "Window light, balcony, morning mood."},
   };
-  const GROUP_EN = {"Basis": "Basics", "Kamera-Klassiker": "Camera Classics", "Farbnegativ": "Color Negative", "Dia & Kräftig": "Slide & Punchy", "Kino": "Cinema", "Beliebte Stile": "Popular Styles", "Schwarzweiß": "Black & White"};
+  const GROUP_EN = {"Basis": "Basics", "Kamera-Klassiker": "Camera Classics", "Farbnegativ": "Color Negative", "Dia & Kräftig": "Slide & Punchy", "Kino": "Cinema", "Beliebte Stile": "Popular Styles", "Editorial": "Editorial", "Schwarzweiß": "Black & White"};
 
   for (const p of PRESETS) {
     p.recipe = Object.assign({}, RECIPE_DEFAULT, p.recipe);
