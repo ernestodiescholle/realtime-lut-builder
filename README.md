@@ -83,7 +83,7 @@ Shown with the built-in synthetic V-Log test image and the *Teal & Orange* look.
    from the camera data (or estimates it if there is none; you can change it under **Edit**).
    Pick a starting look under **Looks** (hover = preview), then refine it under **Edit**.
 3. **Export:** for example `TEALOR-V.cube` (photo), optionally `TEALOM-V.cube` (video variant,
-   M = movie), a recipe card and a preview image, by default bundled as a ZIP. The export follows
+   M = movie; switch in the Export tab, off by default), a recipe card and a preview image, by default bundled as a ZIP. The export follows
    the active photo: with a Natural photo the files end in `-N`.
 4. **Load it into the camera:** copy the `.cube` file to the **root folder** of the SD card, then
    on the camera: MENU › Custom › Image Quality › LUT Library › choose a slot › Load

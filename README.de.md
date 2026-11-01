@@ -58,7 +58,8 @@ Gezeigt mit dem eingebauten synthetischen V-Log-Testbild und dem Look *Teal & Or
    **Bearbeiten** anpassen: Licht, Farbe mit Farbmischer, Color Grading mit Farbrädern.
    Die Vorschau wendet exakt die LUT an, die exportiert wird.
 3. **Exportieren:** Ergibt z. B. `TEALOR-V.cube` (Foto), optional `TEALOM-V.cube` (Video-Variante,
-   M = Movie: weicher, mehr Reserve in den Lichtern), eine Rezeptkarte mit Kamera-Einstellungen
+   M = Movie: weicher, mehr Reserve in den Lichtern; Schalter im Export-Reiter, standardmäßig aus),
+   eine Rezeptkarte mit Kamera-Einstellungen
    und ein Vorschaubild, standardmäßig zusammen als ZIP. Mit Natural enden die Dateien auf `-N`. In der Mac-App wählst du stattdessen
    direkt den Zielordner, z. B. die SD-Karte.
 4. **In die Kamera laden:** `.cube` ins **Hauptverzeichnis** der SD-Karte kopieren.
