@@ -9,10 +9,10 @@ ctx.globalThis = ctx;
 vm.createContext(ctx);
 ctx.localStorage = { getItem: () => null, setItem: () => {} };
 ctx.navigator = { language: 'de-DE' };
-for (const f of ['i18n.js', 'color.js', 'grade.js', 'presets.js']) {
+for (const f of ['i18n.js', 'color.js', 'grade.js', 'presets.js', 'exif.js']) {
   vm.runInContext(fs.readFileSync(path.join(__dirname, '..', 'js', f), 'utf8'), ctx, { filename: f });
 }
-const { LutColor: C, LutGrade: G, LutPresets: P } = ctx;
+const { LutColor: C, LutGrade: G, LutPresets: P, LutExif: X } = ctx;
 
 let failed = 0, passed = 0;
 function check(name, cond, info) {
@@ -235,7 +235,7 @@ for (const b of G.BASE_STYLES.filter((x) => x.mode === 'rel')) {
   const gs = G.makeGrader({ baseStyle: 'STD', saturation: 40 });
   check('Relativ: Sättigung wirkt', chromaOf(gs(0.7, 0.45, 0.35)) > chromaOf([0.7, 0.45, 0.35]) * 1.15);
   // Genauigkeit des 33er-Gitters bei typischen Einstellungen im relativen Modus
-  const pr = { baseStyle: 'NAT', contrast: 40, highlights: -30, shadows: 20, saturation: 25, skinProtect: 40, skinGold: 30, splitShadowAmt: 20, hsl: { green: { h: -20, s: -30 }, blue: { s: 20 } } };
+  const pr = { baseStyle: 'STD', contrast: 40, highlights: -30, shadows: 20, saturation: 25, skinProtect: 40, skinGold: 30, splitShadowAmt: 20, hsl: { green: { h: -20, s: -30 }, blue: { s: 20 } } };
   const lr = G.buildLut(pr, 33), gr = G.makeGrader(pr);
   let meDay = 0, meEdge = 0;
   for (let i = 0; i < 400; i++) {
@@ -243,12 +243,104 @@ for (const b of G.BASE_STYLES.filter((x) => x.mode === 'rel')) {
     const a = G.sampleLut(lr, ...s), b2 = gr(...s);
     const e = Math.max(...a.map((v, c) => Math.abs(v - b2[c])));
     // Alltagsfarbe: im Ausgangsbild nicht am Farbraumrand
-    const lin = G.decodeInput('NAT', ...s), mx = Math.max(...lin), mn = Math.min(...lin);
+    const lin = G.decodeInput('STD', ...s), mx = Math.max(...lin), mn = Math.min(...lin);
     if (mn > 0.02 && mx / mn < 4) meDay = Math.max(meDay, e); else meEdge = Math.max(meEdge, e);
   }
   check('Relativ: 33er-LUT trifft die Funktion bei Alltagsfarben (< 4/255)', meDay < 4 / 255, meDay * 255);
   check('Relativ: Farbraumrand bleibt unter 40/255 (Regressionsschutz)', meEdge < 40 / 255, meEdge * 255);
 }
+// Natural (an der S9 gemessen): Kurve, Neutralität, Weißpunkt, Wirkung der Looks wie auf V-Log
+{
+  let mono = true;
+  for (const ch of ['r', 'g', 'b']) {
+    const st = C.NAT_STOPS[ch];
+    for (let i = 1; i < st.length; i++) if (!(st[i] > st[i - 1])) mono = false;
+    for (let v = 0.01; v < 1; v += 0.037) {
+      if (!near(C.linearToNat(ch, C.natToLinear(ch, v)), v, 1e-9)) mono = false;
+    }
+  }
+  check('Natural: Kurve streng monoton, Hin/Rück exakt', mono);
+  // Gemessen: 18 % Grau liegt im Natural-JPEG bei etwa 110–116 von 255
+  const mg = G.encodeInput('NAT', 0.18, 0.18, 0.18).map((x) => x * 255);
+  check('Natural: Mittelgrau bei Code ~110–116', mg.every((x) => x > 108 && x < 118), mg);
+  check('Natural: Clip-Punkt ~+4 Blenden', C.NAT_CLIP_STOPS > 3.8 && C.NAT_CLIP_STOPS < 4.4, C.NAT_CLIP_STOPS);
+  const gn = G.makeGrader({ baseStyle: 'NAT' });
+  const o = gn(...G.encodeInput('NAT', 0.18, 0.18, 0.18));
+  check('Natural: Mittelgrau -> Mittelgrau, neutral', near(o[1], G.MID_OUT, 5e-3) && near(o[0], o[1], 3e-3) && near(o[1], o[2], 3e-3), o);
+  check('Natural: volles Weiß bleibt Weiß', gn(1, 1, 1).every((x) => x > 0.98), gn(1, 1, 1));
+  check('Natural: Schwarz bleibt Schwarz', gn(0, 0, 0).every((x) => x < 0.01), gn(0, 0, 0));
+  // Gleicher Look auf V-Log und Natural: in Schatten und Mitteltönen (−2,5 … +1 Blende) fast gleich
+  const scene = [];
+  for (const st of [-2.5, -1.5, -0.5, 0, 0.5, 1]) for (const c of [[1, 1, 1], [1, 0.55, 0.35], [0.45, 0.8, 0.35], [0.35, 0.5, 1], [0.9, 0.75, 0.3]]) {
+    const y = 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2], k = (0.18 * Math.pow(2, st)) / y;
+    scene.push(c.map((x) => x * k));
+  }
+  for (const pr of P) {
+    const pv = G.makeGrader(Object.assign({}, pr.params, { baseStyle: 'VLOG' }));
+    const pn = G.makeGrader(Object.assign({}, pr.params, { baseStyle: 'NAT' }));
+    let worst = 0;
+    for (const lin of scene) {
+      const a = pv(...G.encodeInput('VLOG', ...lin)), b = pn(...G.encodeInput('NAT', ...lin));
+      worst = Math.max(worst, ...a.map((v, i) => Math.abs(v - b[i])));
+    }
+    check(`Natural wie V-Log (Mitteltöne) ${pr.id}`, worst < 8 / 255, Math.round(worst * 255));
+  }
+  // Auch Regler, die die Schulter der Tonkurve verbiegen, wirken auf beiden Basen gleich (bis +2,5 Blenden)
+  for (const q of [{ contrast: -100 }, { highlights: 100 }, { highlights: -100, contrast: 60 }, { exposure: 1, shadows: 50 }, { whiteMatte: 30, fade: 20 }]) {
+    const gv = G.makeGrader(Object.assign({}, q, { baseStyle: 'VLOG' })), gn2 = G.makeGrader(Object.assign({}, q, { baseStyle: 'NAT' }));
+    const lim = C.NAT_CLIP_STOPS - 1.5 - (q.exposure || 0) - 0.1;
+    let worst = 0;
+    for (let st = -3; st <= lim; st += 0.25) {
+      const lin = 0.18 * Math.pow(2, st);
+      const a = gv(...G.encodeInput('VLOG', lin, lin, lin)), b = gn2(...G.encodeInput('NAT', lin, lin, lin));
+      worst = Math.max(worst, ...a.map((v, i) => Math.abs(v - b[i])));
+    }
+    check(`Natural wie V-Log bis vor den Clip ${JSON.stringify(q)}`, worst < 3 / 255, Math.round(worst * 255 * 10) / 10);
+  }
+  // 33er-LUT trifft die Funktion bei Alltagsfarben auch auf Natural
+  for (const pr of P) {
+    const q = Object.assign({}, pr.params, { baseStyle: 'NAT' });
+    const lut = G.buildLut(q, 33), g = G.makeGrader(q);
+    let me = 0;
+    for (let i = 0; i < 150; i++) {
+      const s = [0.08 + (((i * 37) % 97) / 96) * 0.84, 0.08 + (((i * 53) % 89) / 88) * 0.84, 0.08 + (((i * 71) % 83) / 82) * 0.84];
+      const mx = Math.max(...s), mn = Math.min(...s);
+      if (mx - mn > 0.45) continue;
+      const a = G.sampleLut(lut, ...s), b = g(...s);
+      me = Math.max(me, ...a.map((v, c) => Math.abs(v - b[c])));
+    }
+    check(`Natural-LUT genau (Alltagsfarben < 6/255) ${pr.id}`, me < 6 / 255, Math.round(me * 255 * 10) / 10);
+  }
+}
+// Bildstil aus den Kameradaten (synthetisches JPEG mit Panasonic-Makernote, beide Byte-Reihenfolgen)
+function fakeJpeg(style, le) {
+  const tiff = [];
+  const u16 = (v) => (le ? [v & 255, v >> 8] : [v >> 8, v & 255]);
+  const u32 = (v) => (le ? [v & 255, (v >> 8) & 255, (v >> 16) & 255, v >>> 24] : [v >>> 24, (v >> 16) & 255, (v >> 8) & 255, v & 255]);
+  const entry = (tag, type, count, val) => [...u16(tag), ...u16(type), ...u32(count), ...val];
+  // TIFF-Kopf (8), IFD0 bei 8 (2+12+4=18), Exif-IFD bei 26 (18), Makernote bei 44
+  tiff.push(...(le ? [0x49, 0x49] : [0x4d, 0x4d]), ...u16(42), ...u32(8));
+  tiff.push(...u16(1), ...entry(0x8769, 4, 1, u32(26)), ...u32(0));
+  const mn = [...[...'Panasonic'].map((c) => c.charCodeAt(0)), 0, 0, 0, ...u16(2), ...entry(0x0001, 7, 4, [48, 49, 50, 51]), ...entry(0x0089, 3, 1, [...u16(style), 0, 0]), ...u32(0)];
+  tiff.push(...u16(1), ...entry(0x927c, 7, mn.length, u32(44)), ...u32(0));
+  tiff.push(...mn);
+  const app1 = [0x45, 0x78, 0x69, 0x66, 0, 0, ...tiff];
+  const len = app1.length + 2;
+  return new Uint8Array([0xff, 0xd8, 0xff, 0xe0, 0, 4, 0, 0, 0xff, 0xe1, len >> 8, len & 255, ...app1, 0xff, 0xda, 0, 2]);
+}
+for (const le of [true, false]) {
+  const o = le ? 'LE' : 'BE';
+  const v = X.readPhotoStyle(fakeJpeg(17, le)), n = X.readPhotoStyle(fakeJpeg(3, le)), s = X.readPhotoStyle(fakeJpeg(1, le));
+  check(`EXIF ${o}: V-Log erkannt`, v && v.style === 17 && v.base === 'VLOG', v);
+  check(`EXIF ${o}: Natural erkannt`, n && n.style === 3 && n.base === 'NAT', n);
+  check(`EXIF ${o}: Standard erkannt, keine unterstützte Basis`, s && s.style === 1 && s.base === null && s.name === 'Standard', s);
+}
+check('EXIF: kein JPEG -> null', X.readPhotoStyle(new Uint8Array([1, 2, 3, 4])) === null);
+check('EXIF: JPEG ohne EXIF -> null', X.readPhotoStyle(new Uint8Array([0xff, 0xd8, 0xff, 0xda, 0, 2])) === null);
+check('EXIF: abgeschnittene Datei -> null', X.readPhotoStyle(fakeJpeg(3, true).slice(0, 40)) === null);
+const other = fakeJpeg(3, true); other[18 + 44] = 0x51; // Makernote-Kennung ("P") zerstört
+check('EXIF: fremde Makernote -> null', X.readPhotoStyle(other) === null, X.readPhotoStyle(other));
+
 // Export-Tag
 check('.cube: Tag folgt dem Basis-Bildstil', G.cubeText(G.buildLut({ baseStyle: 'LCLASN' }, 2), 'x', 'LCLASN').split('\n')[1] === '#LUMIXPHOTOSTYLE LCLASN');
 check('.cube: ohne Angabe V-Log', G.cubeText(G.buildLut({}, 2), 'x').split('\n')[1] === '#LUMIXPHOTOSTYLE VLOG');
@@ -348,6 +440,14 @@ check('.cube: R-Achse läuft zuerst', eR[0] > eR[2] && eB[2] > eB[0], [eR, eB]);
 check('Name: Umlaute', G.sanitizeFileName('Größe Ü') === 'GROESSEU', G.sanitizeFileName('Größe Ü'));
 check('Name: max. 8', G.sanitizeFileName('Kunstlicht800') === 'KUNSTLIC');
 check('Name: leer', G.sanitizeFileName('!!') === 'MYLUT');
+const fnV = G.lutFileNames('Teal & Orange', 'VLOG'), fnN = G.lutFileNames('tealorng', 'NAT');
+check('Dateiname V-Log: -V, max. 8', fnV.photo === 'TEALOR-V' && fnV.video === 'TEALOM-V', fnV);
+check('Dateiname Natural: -N, max. 8', fnN.photo === 'TEALOR-N' && fnN.video === 'TEALOM-N', fnN);
+check('Dateiname kurz', G.lutFileNames('Neon', 'VLOG').photo === 'NEON-V' && G.lutFileNames('Neon', 'VLOG').video === 'NEONM-V');
+for (const pr of P) {
+  const f = G.lutFileNames(pr.file, 'NAT');
+  check(`Dateinamen <= 8 und verschieden ${pr.id}`, f.photo.length <= 8 && f.video.length <= 8 && f.photo !== f.video && /^[A-Z0-9]+-[VN]$/.test(f.photo), f);
+}
 
 // Vorschau-Anwendung = Farbfunktion (Interpolation an Gitterpunkten exakt)
 const src = new Uint8ClampedArray([0, 0, 0, 255, 255, 255, 255, 255, 255, 0, 0, 255]);

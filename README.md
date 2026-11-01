@@ -4,7 +4,8 @@
 
 Build your own looks as `.cube` LUTs for the **Real Time LUT** photo style of the Panasonic
 LUMIX S9 (and likely other LUMIX cameras with Real Time LUT). The goal: finished JPEGs straight
-out of the camera, no RAW editing. The same LUTs also work for video.
+out of the camera, no RAW editing. The same LUTs also work for video. Works with the **V-Log**
+and the **Natural** photo style as base.
 
 It runs entirely in your browser. No installation, no account, no upload – your photos never
 leave your computer.
@@ -57,26 +58,33 @@ Shown with the built-in synthetic V-Log test image and the *Teal & Orange* look.
   highlights), vibrance, saturation, skin tone protection.
 - **White balance like on the camera:** presets, Kelvin, A–B / G–M fine shift, eyedropper and
   auto.
-- **Exact preview:** the preview applies exactly the LUT that gets exported, decoded with
-  Panasonic's published V-Log/V-Gamut formulas.
-- **Camera-ready export:** 33-point `.cube` with the `#LUMIXPHOTOSTYLE VLOG` tag, file names
-  limited to 8 characters, optional softer video variant and a recipe card with suggested
-  camera settings (white balance, exposure, noise reduction, sharpness, grain).
+- **Two base photo styles: V-Log or Natural.** Every look works on both. V-Log is decoded with
+  Panasonic's published V-Log/V-Gamut formulas; Natural with a curve measured on the S9 from
+  14 V-Log/Natural photo pairs at identical exposure. The app reads the photo style from each
+  photo's camera data, so V-Log and Natural photos can be mixed (marked V/N in the filmstrip).
+  See [V-Log or Natural?](#v-log-or-natural)
+- **Exact preview:** the preview applies exactly the LUT that gets exported.
+- **Camera-ready export:** 33-point `.cube` with the matching `#LUMIXPHOTOSTYLE VLOG` or `NAT`
+  tag, file names that fit any SD card (max. 8 characters, ending in `-V` for V-Log or `-N` for
+  Natural), optional softer video variant and a recipe card with suggested camera settings
+  (white balance, exposure, noise reduction, sharpness, grain).
 - **Reference match:** load a finished photo whose mood you like and get slider values as a
   starting point.
 - **Camera comparison:** compare an in-camera JPEG shot with your LUT against the app preview.
-- **Extras:** A/B comparison, 1:1 loupe, before/after split, undo/redo, favourites, saved looks,
+- **Extras:** 1:1 loupe, before/after split, undo/redo, favourites, saved looks,
   vignette and grain preview, English and German UI.
 
 ## How to use
 
-1. **Shoot test photos:** set the camera to the **V-Log** photo style and take a few JPEGs
-   (skin, greenery, sky, backlight, interior). They look flat – that is correct. They are exactly
-   what the LUT receives inside the camera.
-2. **Build a look:** drop the photos into the app, pick a starting look under **Looks**
-   (hover = preview), then refine it under **Edit**.
-3. **Export:** you get `NAME.cube` (photo), optionally `NAMEV.cube` (video variant), a recipe
-   card `NAME.txt` and a preview image, by default bundled as `NAME_LUT.zip`.
+1. **Shoot test photos:** set the camera to the **V-Log** (or **Natural**, all sliders at 0)
+   photo style and take a few JPEGs (skin, greenery, sky, backlight, interior). V-Log photos look
+   flat – that is correct. They are exactly what the LUT receives inside the camera.
+2. **Build a look:** drop the photos into the app. It detects V-Log or Natural for each photo
+   from the camera data (or estimates it if there is none; you can change it under **Edit**).
+   Pick a starting look under **Looks** (hover = preview), then refine it under **Edit**.
+3. **Export:** for example `TEALOR-V.cube` (photo), optionally `TEALOM-V.cube` (video variant,
+   M = movie), a recipe card and a preview image, by default bundled as a ZIP. The export follows
+   the active photo: with a Natural photo the files end in `-N`.
 4. **Load it into the camera:** copy the `.cube` file to the **root folder** of the SD card, then
    on the camera: MENU › Custom › Image Quality › LUT Library › choose a slot › Load
    (or use the LUMIX Lab app).
@@ -90,8 +98,23 @@ No photo at hand? The built-in synthetic V-Log test image lets you try everythin
   +2/3 EV often helps.
 - A LUT changes every pixel independently. Grain, vignette, sharpness, clarity and halation
   cannot be part of a LUT – use the camera settings for grain and sharpness.
-- The app warns you when a loaded image does not look like plain V-Log (e.g. a Standard JPEG or
-  V-Log with a LUT already applied).
+- The app warns you when a loaded image does not match the chosen base photo style (e.g. a
+  Standard JPEG or V-Log with a LUT already applied).
+
+### V-Log or Natural?
+
+Both work with every look, and the result looks nearly the same: on real photo pairs of the same
+scene, the same look differs by only about 3–7 of 255 levels on average. The difference is in
+what the camera records:
+
+| | Natural | V-Log |
+|---|---|---|
+| Minimum ISO on the S9 | 100 | 640 |
+| Highlights clip at about | +4 stops above mid grey | +6.5 stops |
+| Best for | everyday photos, bright sun without ND | backlight, high contrast, video |
+
+The Natural curve was measured on one S9 (ISO 640, fixed white balance, all photo style sliders
+at 0). Feedback from other bodies is welcome.
 
 ## Development
 
@@ -128,12 +151,12 @@ right-click › Open.
 node tests/run.js
 ```
 
-runs about 1,400 checks: V-Log/V-Gamut math, tone curves, colour handling, LUT accuracy of every
+runs about 1,600 checks: V-Log/V-Gamut and Natural math, tone curves, colour handling, LUT accuracy of every
 look, `.cube` format, file names and translations.
 
 | File | Purpose |
 |---|---|
-| `js/color.js` | V-Log/V-Gamut, Rec.709/sRGB, OKLab, HLG |
+| `js/color.js` | V-Log/V-Gamut, measured Natural curve, Rec.709/sRGB, OKLab, HLG |
 | `js/grade.js` | Look engine: parameters → colour function → 3D LUT, `.cube` export |
 | `js/presets.js` | The bundled looks (German and English texts) |
 | `js/app.js` | User interface |
@@ -161,7 +184,7 @@ affiliated with any film or camera manufacturer.
 
 ## Kurzfassung auf Deutsch
 
-Erstellt eigene Looks als `.cube`-LUT für den Bildstil **Real Time LUT** der LUMIX S9: V-Log-Foto
-laden, Look wählen und anpassen, exportieren, `.cube` ins Hauptverzeichnis der SD-Karte kopieren
+Erstellt eigene Looks als `.cube`-LUT für den Bildstil **Real Time LUT** der LUMIX S9: V-Log- oder
+Natural-Foto laden (der Bildstil wird automatisch erkannt), Look wählen und anpassen, exportieren, `.cube` ins Hauptverzeichnis der SD-Karte kopieren
 und an der Kamera über MENU › Individual › Bildqualität › LUT-Bibliothek laden. Läuft komplett
 im Browser, nichts wird hochgeladen. Ausführliche deutsche Anleitung: [README.de.md](README.de.md).

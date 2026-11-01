@@ -309,7 +309,12 @@ body.mono .section .color-only { display: none; }
 }
 .film:hover { opacity: 1; }
 .film.active { opacity: 1; box-shadow: 0 0 0 2px var(--accent); }
+.film { position: relative; }
 .film canvas { height: 100%; display: block; }
+.film-base {
+  position: absolute; left: 3px; bottom: 3px; min-width: 14px; padding: 0 3px; border-radius: 3px; font-size: 10px; font-weight: 600;
+  line-height: 14px; text-align: center; color: #fff; background: rgba(0, 0, 0, 0.65); pointer-events: none;
+}
 .add { width: 38px; height: 38px; border: 1px dashed var(--line); border-radius: 8px; }
 
 /* --- Hinweis-Toast ------------------------------------------------------ */
@@ -367,7 +372,7 @@ body.mono .section .color-only { display: none; }
 .progress .bar { height: 100%; width: 0; background: var(--accent); transition: width 0.15s; }
 .curve-chans .chip.changed::after { content: "•"; color: var(--warn); margin-left: 2px; }
 
-/* --- A/B, Lupe, Referenz-Zähler --------------------------------------------- */
+/* --- Lupe, Referenz-Zähler --------------------------------------------- */
 .icon-btn.on { color: var(--accent-2); background: var(--panel-2); }
 .canvas-area.loupe { display: block; overflow: auto; padding: 0; }
 .canvas-area.loupe .stage { max-width: none; max-height: none; display: inline-flex; }

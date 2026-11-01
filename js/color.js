@@ -1,4 +1,4 @@
-// Farbmathematik: Panasonic V-Log/V-Gamut, Rec.709/sRGB, OKLab.
+// Farbmathematik: Panasonic V-Log/V-Gamut, gemessener Bildstil Natural, Rec.709/sRGB, OKLab.
 // Als klassisches Skript geschrieben, damit index.html auch per Doppelklick (file://) läuft.
 (function (root) {
   'use strict';
@@ -85,6 +85,35 @@
   // Diffuses Weiß (100 % Reflexion) liegt bei HLG auf 75 % Signal; dort ist E ~0,265.
   const HLG_REF_WHITE = hlgInverseOetf(0.75);
 
+  // Bildstil Natural der S9: Codewert (0..1, 65 Stützstellen) -> Blenden relativ zu 18 % Grau, je Kanal.
+  // Gemessen an 14 Bildpaaren V-Log/Natural mit identischer Belichtung (ISO 640, Weißabgleich fest,
+  // alle Regler 0): V-Log nach Panasonics Formel als Referenz. Unterhalb der Messung (~Code 15–19)
+  // proportional im linearen Licht fortgesetzt; Code 1 = Clip-Punkt bei ~+4,1 Blenden.
+  const NAT_STOPS = {
+    r: [-14, -5.2991, -4.2991, -3.7013, -3.2072, -2.8288, -2.6681, -2.4735, -2.3015, -2.1246, -1.938, -1.7615, -1.6007, -1.4617, -1.3291, -1.201, -1.0801, -0.9722, -0.8734, -0.7839, -0.6982, -0.6078, -0.5158, -0.4213, -0.3317, -0.2396, -0.1495, -0.0615, 0.0224, 0.103, 0.1823, 0.2564, 0.3316, 0.4107, 0.4952, 0.58, 0.6614, 0.7416, 0.8194, 0.8973, 0.9776, 1.0613, 1.1483, 1.2402, 1.3411, 1.4486, 1.5572, 1.6661, 1.7723, 1.8765, 1.9852, 2.1044, 2.2378, 2.3757, 2.5081, 2.6379, 2.7671, 2.8962, 3.0208, 3.1408, 3.2623, 3.3873, 3.5072, 3.5917, 4.1],
+    g: [-14, -5.2884, -4.2884, -3.6906, -3.1965, -2.9846, -2.7614, -2.5255, -2.3156, -2.1362, -1.9695, -1.8186, -1.6711, -1.5332, -1.4056, -1.2876, -1.1721, -1.057, -0.9434, -0.8335, -0.7268, -0.6239, -0.5204, -0.4244, -0.3357, -0.2525, -0.1698, -0.0804, 0.01, 0.1028, 0.1908, 0.2731, 0.3523, 0.4358, 0.5262, 0.6152, 0.7007, 0.7901, 0.8901, 0.9972, 1.1, 1.1831, 1.2564, 1.3302, 1.4138, 1.5116, 1.6157, 1.7203, 1.8223, 1.9231, 2.0323, 2.1488, 2.2761, 2.4018, 2.5282, 2.6493, 2.775, 2.9013, 3.0248, 3.1343, 3.2399, 3.3413, 3.4394, 3.508, 4.1],
+    b: [-14, -5.3735, -4.3735, -3.7756, -3.4308, -3.2157, -2.9555, -2.7268, -2.5241, -2.3474, -2.1741, -2.0084, -1.8526, -1.7176, -1.5985, -1.5148, -1.4516, -1.3759, -1.2615, -1.1123, -0.9711, -0.8429, -0.7141, -0.5921, -0.4728, -0.3732, -0.278, -0.1826, -0.0885, 0.0009, 0.0807, 0.1543, 0.2357, 0.3295, 0.4307, 0.5287, 0.618, 0.7113, 0.8051, 0.9016, 0.9967, 1.092, 1.1856, 1.278, 1.3749, 1.4795, 1.5866, 1.695, 1.8037, 1.9136, 2.0247, 2.1393, 2.2635, 2.3961, 2.5274, 2.6518, 2.7742, 2.9027, 3.0273, 3.1524, 3.2641, 3.3773, 3.4783, 3.5538, 4.1],
+  };
+  const NAT_CLIP_STOPS = NAT_STOPS.r[64];
+  const NAT_N = 64;
+  function natToLinear(ch, v) {
+    const s = NAT_STOPS[ch];
+    if (v <= 0) return 0;
+    if (v >= 1) return 0.18 * Math.pow(2, s[NAT_N]);
+    const x = v * NAT_N, i = Math.floor(x), f = x - i;
+    return 0.18 * Math.pow(2, s[i] + (s[i + 1] - s[i]) * f);
+  }
+  function linearToNat(ch, x) {
+    const s = NAT_STOPS[ch];
+    if (x <= 0) return 0;
+    const st = Math.log2(x / 0.18);
+    if (st <= s[0]) return 0;
+    if (st >= s[NAT_N]) return 1;
+    let lo = 0, hi = NAT_N;
+    while (hi - lo > 1) { const m = (lo + hi) >> 1; if (s[m] <= st) lo = m; else hi = m; }
+    return (lo + (st - s[lo]) / (s[hi] - s[lo])) / NAT_N;
+  }
+
   // --- OKLab (Björn Ottosson) auf linearem sRGB/Rec.709 --------------------
   function linearToOklab(r, g, b) {
     const l = Math.cbrt(0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b);
@@ -121,6 +150,7 @@
     mul3, inv3, apply3, npm,
     VGAMUT_TO_709, REC709_TO_VGAMUT, REC709_TO_XYZ, XYZ_TO_REC709, REC2020_TO_709, REC709_TO_2020,
     hlgOetf, hlgInverseOetf, HLG_REF_WHITE,
+    NAT_STOPS, NAT_CLIP_STOPS, natToLinear, linearToNat,
     linearToOklab, oklabToLinear, hueSwatch,
   };
 })(typeof globalThis !== 'undefined' ? globalThis : this);

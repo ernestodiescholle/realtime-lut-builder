@@ -27,11 +27,11 @@
   //  rel:  relativ – das JPEG im jeweiligen Bildstil wird als fertiges sRGB-Bild gelesen;
   //        die LUT verfeinert es nur und ist in Grundeinstellung neutral.
   const BASE_STYLES = [
-    { tag: 'VLOG', name: 'V-Log', mode: 'vlog' },
+    { tag: 'VLOG', name: 'V-Log', mode: 'vlog', suffix: 'V' },
     { tag: '2100HLGF', name: 'Like2100 (HLG) Full Range', mode: 'hlg', full: true },
     { tag: '2100HLG', name: 'Like2100 (HLG)', mode: 'hlg', full: false },
     { tag: 'STD', name: 'Standard', mode: 'rel' },
-    { tag: 'NAT', name: 'Natural', mode: 'rel' },
+    { tag: 'NAT', name: 'Natural', mode: 'nat', suffix: 'N' },
     { tag: 'VIVD', name: 'Vivid', mode: 'rel' },
     { tag: 'LCLASN', name: 'L.ClassicNeo', mode: 'rel' },
     { tag: 'FLAT', name: 'Flat', mode: 'rel' },
@@ -218,6 +218,23 @@
     };
   }
 
+  // Natural: dieselbe Tonkurve wie bei V-Log (gleiche Wirkung aller Regler), nur auf den letzten
+  // 1,5 Blenden vor dem Clip-Punkt von Natural weich zu Weiß gezogen, damit ausgefressene
+  // Stellen weiß bleiben statt grau zu werden.
+  const NAT_ROLL = 1.5;
+  function natTone(p) {
+    const tone = makeToneCurve(p, 6);
+    const clipT = C.NAT_CLIP_STOPS + p.exposure;
+    const white = 1 - (p.whiteMatte / 100) * 0.12;
+    const lift = white - tone(clipT);
+    return function (t) {
+      const e = tone(t);
+      if (lift <= 0 || t <= clipT - NAT_ROLL) return e;
+      const x = Math.min(1, (t - (clipT - NAT_ROLL)) / NAT_ROLL);
+      return e + lift * x * x * (3 - 2 * x);
+    };
+  }
+
   // Gamut-Kompression nach dem Muster des ACES-RGC: zieht Farben außerhalb Rec.709 weich herein.
   const GC_THR = 0.9, GC_LIM = 1.3, GC_P = 1.2;
   const GC_S = (GC_LIM - GC_THR) / Math.pow(Math.pow((1 - GC_THR) / (GC_LIM - GC_THR), -GC_P) - 1, 1 / GC_P);
@@ -244,6 +261,7 @@
       const dec = (v) => C.hlgInverseOetf(clamp(base.full ? v : (v * 255 - 16) / 219, 0, 1)) / C.HLG_REF_WHITE;
       return gamutCompress(C.apply3(C.REC2020_TO_709, dec(r), dec(g), dec(b)));
     }
+    if (base.mode === 'nat') return [C.natToLinear('r', r), C.natToLinear('g', g), C.natToLinear('b', b)];
     return [C.srgbDecode(r), C.srgbDecode(g), C.srgbDecode(b)];
   }
 
@@ -259,6 +277,7 @@
         return clamp(base.full ? e : (16 + 219 * e) / 255, 0, 1);
       });
     }
+    if (base.mode === 'nat') return [C.linearToNat('r', r), C.linearToNat('g', g), C.linearToNat('b', b)];
     return [r, g, b].map((x) => clamp(C.srgbEncode(x), 0, 1));
   }
 
@@ -351,7 +370,7 @@
     const p = normalizeParams(params);
     const base = baseInfo(p.baseStyle);
     const relative = base.mode === 'rel';
-    const tone = makeToneCurve(p, base.mode === 'hlg' ? HLG_STOPS : 6);
+    const tone = base.mode === 'nat' ? natTone(p) : makeToneCurve(p, base.mode === 'hlg' ? HLG_STOPS : 6);
     const relTone = relative ? makeRelativeTone(p) : null;
     const expo = Math.pow(2, p.exposure);
     // Weißabgleich als Verstärkung im linearen Licht, auf gleiche Helligkeit normiert:
@@ -516,6 +535,20 @@
     return s || 'MYLUT';
   }
 
+  // Dateinamen für den Export. FAT32-Karten (SD/SDHC) erlauben höchstens 8 Zeichen ohne Endung,
+  // daher: Name (max. 6) + "-V"/"-N" für den Basis-Bildstil; die Video-Variante ersetzt das
+  // 6. Zeichen durch "M" (Movie), z. B. TEALOR-V und TEALOM-V.
+  const STEM_LEN = 6;
+  function lutFileNames(name, baseTag) {
+    const suffix = baseInfo(baseTag).suffix;
+    if (!suffix) {
+      const n = sanitizeFileName(name);
+      return { photo: n, video: n.slice(0, 7) + 'M' };
+    }
+    const stem = sanitizeFileName(name, STEM_LEN);
+    return { photo: stem + '-' + suffix, video: stem.slice(0, STEM_LEN - 1) + 'M-' + suffix };
+  }
+
   function asciiTitle(title) {
     const t = String(title || 'LUT')
       .replace(/ß/g, 'ss').replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue')
@@ -587,6 +620,6 @@
     WB_REFERENCE_K, kelvinToRgb, kelvinGains,
     BASE_STYLES, baseInfo, decodeInput, encodeInput, makeRelativeTone,
     defaultParams, normalizeParams, makeToneCurve, makeGrader,
-    buildLut, videoVariant, sanitizeFileName, asciiTitle, cubeText, applyLut, sampleLut, oklchToLinearClipped,
+    buildLut, videoVariant, sanitizeFileName, STEM_LEN, lutFileNames, asciiTitle, cubeText, applyLut, sampleLut, oklchToLinearClipped,
   };
 })(typeof globalThis !== 'undefined' ? globalThis : this);

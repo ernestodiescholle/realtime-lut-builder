@@ -9,8 +9,10 @@
   const PREVIEW_MAX = 1800; // lange Kante der Vorschau in Pixeln
   const STORE_KEY = 'lutgen.looks.v1';
   // Funktionen, die vorerst ausgeblendet sind. Der Code bleibt, die Oberfläche zeigt sie nicht.
-  //  baseStyles: andere Basis-Bildstile als V-Log (HLG, Standard, Natural …)
-  const FEATURES = { baseStyles: false };
+  //  baseStyles: wählbare Basis-Bildstile. V-Log (Formel) und Natural (an der S9 gemessen);
+  //  die übrigen (HLG, Standard …) sind nur angenähert und vorerst ausgeblendet.
+  const FEATURES = { baseStyles: ['VLOG', 'NAT'] };
+  const allowedBase = (tag) => FEATURES.baseStyles.includes(tag);
   const UI_KEY = 'lutgen.ui.v1';
 
   const state = {
@@ -26,14 +28,12 @@
     lut: null,
     hovering: false,
     preview: { vignette: 0, grain: 0 },
-    b: null, // gemerkter Look für den A/B-Vergleich: { params, lut, name }
     fileNameTouched: false,
     titleTouched: false,
   };
 
   const origCanvas = document.createElement('canvas');
   const lookCanvas = document.createElement('canvas');
-  const bCanvas = document.createElement('canvas');
   const view = $('view');
   const current = () => state.images[state.active];
   // Optionale Umleitung früherer Look-IDs (z. B. nach Umbenennungen); standardmäßig leer.
@@ -209,30 +209,31 @@
   }
 
   function renderBaseSelect() {
-    if (!FEATURES.baseStyles) {
-      document.querySelector('.base-row').hidden = true;
-      $('baseNote').hidden = true;
-      $('tagBefore').textContent = t('Vorher · V-Log');
-      return;
-    }
     const sel = $('baseStyle');
     if (!sel.options.length) {
-      const groups = [['Exakt (Formel bekannt)', (b) => b.mode !== 'rel'], ['Relativ (JPEG im Bildstil)', (b) => b.mode === 'rel']];
-      for (const [label, f] of groups) {
-        const og = document.createElement('optgroup');
-        og.label = label;
-        for (const b of G.BASE_STYLES.filter(f)) og.appendChild(new Option(b.name, b.tag));
-        sel.appendChild(og);
-      }
+      for (const b of G.BASE_STYLES.filter((x) => allowedBase(x.tag))) sel.appendChild(new Option(b.name, b.tag));
     }
     const b = base();
     sel.value = b.tag;
     $('tagBefore').textContent = t('Vorher · {name}', { name: t(b.name) });
     const badge = $('baseMode');
-    badge.textContent = b.mode === 'rel' ? 'relativ' : 'exakt';
+    badge.textContent = t(b.mode === 'rel' ? 'relativ' : b.mode === 'nat' ? 'gemessen' : 'exakt');
     badge.classList.toggle('rel', b.mode === 'rel');
     const note = $('baseNote');
-    if (b.mode === 'rel') {
+    const img = current();
+    const src = !img ? '' : {
+      exif: t('Für dieses Bild automatisch erkannt (Kameradaten: {style}).', { style: t(img.exifStyle || b.name) }),
+      'exif-other': t('Laut Kameradaten im Bildstil {style} fotografiert. Unterstützt sind V-Log und Natural; geschätzt: {name}.', { style: t(img.exifStyle || '?'), name: t(b.name) }),
+      guess: t('Für dieses Bild geschätzt (keine Kameradaten gefunden). Bei Bedarf oben umstellen.'),
+      manual: t('Für dieses Bild von Hand gewählt.'),
+    }[img.baseSource] || '';
+    if (b.mode === 'nat') {
+      note.hidden = false;
+      note.textContent = (src ? src + ' ' : '') + t('Natural: Lade ein JPEG im Bildstil Natural (alle Regler auf 0). Die Kurve ist an der S9 gemessen; alle Looks wirken wie auf V-Log. Natural erlaubt ISO ab 100, die Lichter clippen aber rund 2,5 Blenden früher.');
+    } else if (src) {
+      note.hidden = false;
+      note.textContent = src;
+    } else if (b.mode === 'rel') {
       note.hidden = false;
       note.textContent = t('Relativer Modus: Lade ein JPEG, das im Bildstil {name} fotografiert ist. Die LUT verfeinert dieses fertige Bild; in Grundeinstellung verändert sie nichts. Die mitgelieferten Looks sind für V-Log abgestimmt und wirken hier kräftiger.', { name: t(b.name) });
     } else if (b.mode === 'hlg') {
@@ -249,11 +250,12 @@
     const tag = state.params.baseStyle;
     if (state.syncedBase === tag) return;
     state.syncedBase = tag;
-    const ti = state.images.findIndex((im) => im.kind === 'test');
-    if (ti >= 0) {
-      state.images[ti] = makeImageRecord(window.LutTestImage.makeTestImage(1500, 1000, tag), 'Testbild', 'test');
+    const ti = state.active;
+    const cur = current();
+    if (cur && cur.kind === 'test' && cur.encodedBase !== tag) {
+      state.images[ti] = Object.assign(makeImageRecord(window.LutTestImage.makeTestImage(1500, 1000, tag), 'Testbild', 'test'), { base: tag, baseSource: 'test', encodedBase: tag });
       renderFilmstrip();
-      if (ti === state.active) activate(ti);
+      activate(ti);
     }
     if (current()) checkVlog(current());
     renderRecipe();
@@ -263,6 +265,8 @@
   function setBaseStyle(tag) {
     if (tag === state.params.baseStyle) return;
     state.params.baseStyle = G.baseInfo(tag).tag;
+    if (current()) { current().base = state.params.baseStyle; if (current().kind !== 'test') current().baseSource = 'manual'; }
+    renderFilmstrip();
     refreshControls();
     onParamsChanged(false);
     toast(t('Basis-Bildstil: {name}', { name: t(base().name) + (base().mode === 'rel' ? ' (' + t('relativ') + ')' : '') }));
@@ -411,7 +415,8 @@
 
   // --- Verlauf (Rückgängig / Wiederholen) -------------------------------------
   const history = { stack: [], index: -1, max: 100, applying: false };
-  const snapshot = () => JSON.stringify({ presetId: state.presetId, params: state.params });
+  // Der Basis-Bildstil gehört zum Bild, nicht zum Look: nicht im Verlauf.
+  const snapshot = () => JSON.stringify({ presetId: state.presetId, params: Object.assign({}, state.params, { baseStyle: undefined }) });
   function updateUndoButtons() {
     $('btnUndo').disabled = history.index <= 0;
     $('btnRedo').disabled = history.index >= history.stack.length - 1;
@@ -430,7 +435,7 @@
     const o = JSON.parse(s);
     history.applying = true;
     state.presetId = resolveId(o.presetId);
-    state.params = G.normalizeParams(o.params);
+    state.params = G.normalizeParams(Object.assign({}, o.params, { baseStyle: current() ? current().base : 'VLOG' }));
     markActivePreset();
     renderRecipe();
     refreshControls();
@@ -624,10 +629,10 @@
 
   function applyPreset(id, params) {
     state.presetId = id;
-    const keepBase = FEATURES.baseStyles ? (params && params.baseStyle) || state.params.baseStyle : 'VLOG';
+    const keepBase = current() ? current().base : 'VLOG';
     state.params = G.normalizeParams(Object.assign({}, params || preset().params, { baseStyle: keepBase }));
     state.hovering = false;
-    if (!state.fileNameTouched) $('fileName').value = preset().file;
+    if (!state.fileNameTouched) $('fileName').value = G.sanitizeFileName(preset().file, G.STEM_LEN);
     if (!state.titleTouched) $('lutTitle').value = lookText(preset(), 'name');
     markActivePreset();
     renderRecipe();
@@ -646,7 +651,7 @@
       [t('Rauschminderung'), r.nr],
       [t('Schärfe'), r.sharpness],
       [t('Körnung'), tv(r.grain) + t(' (falls im Bildstil verfügbar)')],
-      [t('ISO'), base().mode === 'rel' ? t('Normale Mindest-ISO, niedrige ISO (z. B. 100–200) möglich') : t('In {name} gilt eine höhere Mindest-ISO, dafür möglichst niedrig bleiben', { name: t(base().name) })],
+      [t('ISO'), base().mode === 'rel' || base().mode === 'nat' ? t('Normale Mindest-ISO, niedrige ISO (z. B. 100–200) möglich') : t('In {name} gilt eine höhere Mindest-ISO, dafür möglichst niedrig bleiben', { name: t(base().name) })],
     ];
   }
 
@@ -691,8 +696,8 @@
 
   // --- Bilder ------------------------------------------------------------------
   let nextId = 1;
-  function addImage(drawable, name, kind) {
-    state.images.push(makeImageRecord(drawable, name, kind));
+  function addImage(drawable, name, kind, detect) {
+    state.images.push(Object.assign(makeImageRecord(drawable, name, kind), detect || { base: 'VLOG', baseSource: kind === 'test' ? 'test' : 'guess' }));
     renderFilmstrip();
     return state.images.length - 1;
   }
@@ -723,8 +728,12 @@
     state.images.forEach((img, i) => {
       const b = document.createElement('button');
       b.className = 'film' + (i === state.active ? ' active' : '');
-      b.title = img.name;
-      b.appendChild(img.film);
+      const bi = G.baseInfo(img.base);
+      b.title = img.name + ' · ' + t(bi.name);
+      const tag = document.createElement('span');
+      tag.className = 'film-base';
+      tag.textContent = bi.suffix || bi.tag;
+      b.append(img.film, tag);
       b.addEventListener('click', () => activate(i));
       box.appendChild(b);
     });
@@ -734,14 +743,20 @@
     state.active = i;
     const img = current();
     const { width: w, height: h } = img.src;
-    for (const cv of [origCanvas, lookCanvas, bCanvas, view]) { cv.width = w; cv.height = h; }
+    for (const cv of [origCanvas, lookCanvas, view]) { cv.width = w; cv.height = h; }
     origCanvas.getContext('2d').putImageData(img.src, 0, 0);
     state.out = new ImageData(w, h);
     $('docName').textContent = img.name;
     [...$('filmstrip').children].forEach((el, j) => el.classList.toggle('active', j === i));
+    if (state.params.baseStyle !== img.base) {
+      state.params.baseStyle = img.base;
+      refreshControls();
+      onParamsChanged(false);
+    } else {
+      renderBaseSelect();
+      if (state.lut) renderPreview(state.lut, false); else onParamsChanged(false);
+    }
     checkVlog(img);
-    if (state.lut) renderPreview(state.lut, false); else onParamsChanged(false);
-    renderB();
     renderPresetThumbs();
     updateMatchSource();
   }
@@ -773,25 +788,11 @@
     }
   }
 
-  function renderB() {
-    const img = current();
-    if (!img || !state.b) return;
-    const out = new ImageData(img.src.width, img.src.height);
-    G.applyLut(state.b.lut, img.src.data, out.data);
-    previewEffects(out);
-    bCanvas.getContext('2d').putImageData(out, 0, 0);
-  }
-
-  function markB() {
-    state.b = { params: G.normalizeParams(state.params), lut: G.buildLut(state.params, 33), name: $('lutTitle').value || lookText(preset(), 'name') };
-    $('modeB').disabled = false;
-    $('modeB').title = t('Gemerkter Look B: {name} (B)', { name: state.b.name });
-    renderB();
-    toast(t('„{name}“ als B gemerkt. Taste B vergleicht.', { name: state.b.name }));
-  }
-
   // Grobe Prüfung: V-Log hat kein echtes Schwarz (Codewert ~32 von 255).
-  function checkVlog(img) {
+  // Tonwertspanne: V-Log der S9 hat ein angehobenes Schwarz (Codewert ~32) und erreicht nie
+  // volles Weiß (gemessen höchstens ~225). Fertige Bilder (Natural, Standard, V-Log mit LUT)
+  // haben tiefes Schwarz oder fast volles Weiß.
+  function looksFlat(img) {
     const d = img.src.data;
     const hist = new Uint32Array(256);
     let n = 0;
@@ -800,10 +801,19 @@
     for (let v = 0; v < 256; v++) { acc += hist[v]; if (acc >= n * 0.01) { p1 = v; break; } }
     acc = 0;
     for (let v = 0; v < 256; v++) { acc += hist[v]; if (acc >= n * 0.998) { p998 = v; break; } }
-    // V-Log der S9 hat ein angehobenes Schwarz (Codewert ~32) und erreicht nie volles Weiß
-    // (gemessen höchstens ~225). Fertige Bilder (Standard, V-Log mit V709-LUT) haben tiefes
-    // Schwarz oder fast volles Weiß.
-    const notVlog = p1 < 28 || p998 >= 236;
+    return { p1, p998, notVlog: p1 < 28 || p998 >= 236 };
+  }
+
+  // Basis-Bildstil eines geladenen Fotos: aus den Kameradaten, sonst aus der Tonwertspanne geschätzt.
+  function detectBase(img, exif) {
+    if (exif && exif.base && allowedBase(exif.base)) return { base: exif.base, baseSource: 'exif', exifStyle: exif.name };
+    const guess = looksFlat(img).notVlog ? 'NAT' : 'VLOG';
+    if (exif) return { base: guess, baseSource: 'exif-other', exifStyle: exif.name };
+    return { base: guess, baseSource: 'guess' };
+  }
+
+  function checkVlog(img) {
+    const { p1, notVlog } = looksFlat(img);
     const hint = $('hint');
     const b = base();
     if (img.kind === 'test') {
@@ -812,7 +822,7 @@
     } else if (b.mode === 'vlog' && notVlog) {
       hint.className = 'hint show warn';
       hint.textContent = t('„{name}“ sieht nicht nach reinem V-Log aus ({why}). Wahrscheinlich ein fertiges Bild, z. B. Standard oder V-Log mit LUT (V709). Die App würde es doppelt bearbeiten. Bitte im Bildstil V-Log ohne LUT fotografieren.', { name: img.name, why: t(p1 < 28 ? 'zu tiefes Schwarz' : 'fast volles Weiß') });
-    } else if (b.mode === 'rel' && !notVlog) {
+    } else if ((b.mode === 'rel' || b.mode === 'nat') && !notVlog) {
       hint.className = 'hint show warn';
       hint.textContent = t('„{name}“ sieht nach V-Log aus (flaues Bild), gewählt ist aber „{base}“. Für diesen Basis-Bildstil bitte ein JPEG im Bildstil {base} laden – oder oben V-Log wählen.', { name: img.name, base: t(b.name) });
     } else {
@@ -820,20 +830,41 @@
     }
   }
 
+  function loadedToast(added) {
+    const n = added.length, lastName = n ? added[n - 1].name : '';
+    const cnt = (tag) => added.filter((im) => im.base === tag).length;
+    const head = n === 1 ? t('{name} geladen', { name: lastName }) : t('{n} Bilder geladen', { n });
+    const parts = FEATURES.baseStyles.filter((tag) => cnt(tag)).map((tag) => (n === 1 ? '' : cnt(tag) + '× ') + t(G.baseInfo(tag).name));
+    return head + ' · ' + parts.join(', ') + (added.some((im) => im.baseSource !== 'exif') ? ' ' + t('(teils geschätzt)') : '');
+  }
+
   function loadFiles(fileList) {
     const files = [...(fileList || [])].filter((f) => /^image\//.test(f.type));
     if (!files.length) { toast('Bitte JPEG-Dateien wählen.'); return; }
     let first = -1, done = 0;
+    const added = [];
+    let failed = 0;
+    const finish = () => {
+      if (++done < files.length || !added.length) return;
+      renderFilmstrip(); refreshFilmThumbs();
+      toast(loadedToast(added) + (failed ? ' · ' + t('{n} nicht lesbar', { n: failed }) : ''));
+    };
     files.forEach((file) => {
       const url = URL.createObjectURL(file);
       const img = new Image();
-      img.onload = () => {
-        const idx = addImage(img, file.name, 'photo');
+      // Kameradaten stehen am Dateianfang; 512 KB reichen auch für große Vorschaubilder davor.
+      const exifP = file.slice(0, 524288).arrayBuffer().then((b) => window.LutExif.readPhotoStyle(b), () => null);
+      img.onload = () => exifP.then((exif) => {
+        const rec = makeImageRecord(img, file.name, 'photo');
+        state.images.push(Object.assign(rec, detectBase(rec, exif)));
+        added.push(rec);
+        renderFilmstrip();
+        const idx = state.images.length - 1;
         if (first < 0) { first = idx; activate(idx); }
         URL.revokeObjectURL(url);
-        if (++done === files.length) { renderFilmstrip(); refreshFilmThumbs(); toast(files.length === 1 ? t('{name} geladen', { name: file.name }) : t('{n} Bilder geladen', { n: files.length })); }
-      };
-      img.onerror = () => { URL.revokeObjectURL(url); done++; toast(t('{name} konnte nicht gelesen werden.', { name: file.name })); };
+        finish();
+      });
+      img.onerror = () => { URL.revokeObjectURL(url); failed++; toast(t('{name} konnte nicht gelesen werden.', { name: file.name })); finish(); };
       img.src = url;
     });
   }
@@ -852,9 +883,11 @@
 
   function refreshFilmThumbs() {
     if (!state.lut) return;
+    const luts = {};
     for (const img of state.images) {
+      const lut = img.base === state.params.baseStyle ? state.lut : (luts[img.base] = luts[img.base] || G.buildLut(Object.assign({}, state.params, { baseStyle: img.base }), 17));
       const out = new ImageData(img.filmSrc.width, img.filmSrc.height);
-      G.applyLut(state.lut, img.filmSrc.data, out.data);
+      G.applyLut(lut, img.filmSrc.data, out.data);
       img.film.getContext('2d').putImageData(out, 0, 0);
     }
   }
@@ -865,8 +898,7 @@
     const w = view.width, h = view.height;
     const line = $('splitLine');
     const showOrig = state.mode === 'orig' && !state.hovering;
-    const showB = state.mode === 'b' && state.b && !state.hovering;
-    ctx.drawImage(showOrig ? origCanvas : showB ? bCanvas : lookCanvas, 0, 0);
+    ctx.drawImage(showOrig ? origCanvas : lookCanvas, 0, 0);
     const split = state.mode === 'split';
     $('viewer').classList.toggle('split', split);
     view.style.cursor = split ? 'ew-resize' : 'default';
@@ -1089,7 +1121,7 @@
       load.addEventListener('click', () => {
         state.fileNameTouched = !!look.fileName;
         state.titleTouched = true;
-        if (look.fileName) $('fileName').value = look.fileName;
+        if (look.fileName) $('fileName').value = G.sanitizeFileName(look.fileName, G.STEM_LEN);
         $('lutTitle').value = look.name;
         const lookPresetId = resolveId(look.presetId);
         applyPreset(PRESETS.some((p) => p.id === lookPresetId) ? lookPresetId : 'neutral', look.params);
@@ -1379,7 +1411,7 @@
         $('lutTitle').value = t('Abgleich {name}', { name: state.ref.name.replace(/\.[^.]+$/, '') }).slice(0, 40);
         state.fileNameTouched = false;
         applyPreset('neutral', params);
-        $('fileName').value = G.sanitizeFileName(state.ref.name.replace(/\.[^.]+$/, ''));
+        $('fileName').value = G.sanitizeFileName(state.ref.name.replace(/\.[^.]+$/, ''), G.STEM_LEN);
         state.fileNameTouched = true;
         updateMatchSource();
         showTab('edit');
@@ -1389,7 +1421,6 @@
 
   // --- Ereignisse -----------------------------------------------------------
   function setMode(mode) {
-    if (mode === 'b' && !state.b) { toast('Erst einen Look als B merken (Lesezeichen unten).'); return; }
     state.mode = mode;
     for (const x of $('viewMode').children) x.classList.toggle('active', x.dataset.mode === mode);
     draw();
@@ -1420,7 +1451,6 @@
     $('rail').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) showTab(b.dataset.tab); });
     $('baseStyle').addEventListener('change', (e) => setBaseStyle(e.target.value));
     $('btnUndo').addEventListener('click', undo);
-    $('btnMarkB').addEventListener('click', markB);
     $('btnLoupe').addEventListener('click', toggleLoupe);
     let pan = null;
     $('viewer').addEventListener('pointerdown', (e) => {
@@ -1471,7 +1501,6 @@
       if (e.key === 'Escape' && state.picking) { setPicking(false); return; }
       if (e.key === '\\') setMode(state.mode === 'orig' ? 'look' : 'orig');
       else if (e.key === 'y' || e.key === 'Y') setMode(state.mode === 'split' ? 'look' : 'split');
-      else if (e.key === 'b' || e.key === 'B') setMode(state.mode === 'b' ? 'look' : 'b');
       else if (e.key === 'z' || e.key === 'Z') toggleLoupe();
     });
 
@@ -1514,20 +1543,21 @@
 
     $('fileName').addEventListener('input', (e) => {
       const raw = e.target.value;
-      const clean = /[A-Za-z0-9ÄÖÜäöüß]/.test(raw) ? G.sanitizeFileName(raw) : '';
+      const clean = /[A-Za-z0-9ÄÖÜäöüß]/.test(raw) ? G.sanitizeFileName(raw, G.STEM_LEN) : '';
       if (clean !== raw) e.target.value = clean;
       state.fileNameTouched = clean.length > 0;
     });
     $('lutTitle').addEventListener('input', (e) => { state.titleTouched = e.target.value.length > 0; });
 
     $('btnExport').addEventListener('click', () => {
-      const name = G.sanitizeFileName($('fileName').value || preset().file);
-      $('fileName').value = name;
+      const names = G.lutFileNames($('fileName').value || preset().file, state.params.baseStyle);
+      const name = names.photo;
+      $('fileName').value = G.sanitizeFileName($('fileName').value || preset().file, G.STEM_LEN);
       const title = $('lutTitle').value || preset().name;
       const files = [[name + '.cube', G.cubeText(G.buildLut(state.params, 33), title, state.params.baseStyle)]];
       let videoName = null;
       if ($('videoToo').checked) {
-        videoName = name.slice(0, 7) + 'V';
+        videoName = names.video;
         files.push([videoName + '.cube', G.cubeText(G.buildLut(G.videoVariant(state.params), 33), title + ' Video', state.params.baseStyle)]);
       }
       files.push([name + '.txt', recipeText(name, videoName)]);
@@ -1584,7 +1614,6 @@
     refreshControls();
     renderSaved();
     if (current()) checkVlog(current());
-    if (state.b) $('modeB').title = t('Gemerkter Look B: {name} (B)', { name: state.b.name });
   }
   $('langSwitch').addEventListener('click', (e) => {
     const b = e.target.closest('button');
@@ -1601,7 +1630,7 @@
   wire();
   renderPresets();
   renderSaved();
-  addImage(window.LutTestImage.makeTestImage(), 'Testbild', 'test');
+  addImage(window.LutTestImage.makeTestImage(), 'Testbild', 'test', { base: 'VLOG', baseSource: 'test', encodedBase: 'VLOG' });
   state.syncedBase = 'VLOG';
   activate(0);
   applyPreset('neutral');

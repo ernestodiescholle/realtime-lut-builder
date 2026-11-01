@@ -4,7 +4,8 @@
 
 Erstellt eigene Looks (klassische Film- und Kamera-Looks, Kino, Schwarzweiß) als `.cube`-LUT für den Bildstil
 **Real Time LUT** der S9. Ziel: fertige JPEGs direkt aus der Kamera, ohne RAW-Entwicklung.
-Dieselben LUTs funktionieren auch für Video.
+Dieselben LUTs funktionieren auch für Video. Als Basis gehen die Bildstile **V-Log** und
+**Natural**.
 
 Läuft komplett lokal im Browser. Keine Installation, keine Cloud.
 
@@ -49,16 +50,16 @@ Gezeigt mit dem eingebauten synthetischen V-Log-Testbild und dem Look *Teal & Or
 
 ## Ablauf
 
-1. **Testfotos machen:** An der S9 den Bildstil **V-Log** wählen und ein paar JPEGs aufnehmen
+1. **Testfotos machen:** An der S9 den Bildstil **V-Log** (oder **Natural**, alle Regler auf 0) wählen und ein paar JPEGs aufnehmen
    (Hauttöne, Grün, Himmel, Gegenlicht, Innenraum). Die Bilder sehen flau aus, das ist richtig.
    Sie entsprechen genau dem, was die LUT in der Kamera als Eingang bekommt.
 2. **Look bauen:** Fotos in die App ziehen (mehrere gehen, sie erscheinen unten im Filmstreifen).
    Rechts unter **Looks** einen Startpunkt wählen (Maus darüber = Vorschau), dann unter
    **Bearbeiten** anpassen: Licht, Farbe mit Farbmischer, Color Grading mit Farbrädern.
    Die Vorschau wendet exakt die LUT an, die exportiert wird.
-3. **Exportieren:** Ergibt `NAME.cube` (Foto), optional `NAMEV.cube` (Video-Variante: weicher,
-   mehr Reserve in den Lichtern), `NAME.txt` (Rezeptkarte mit Kamera-Einstellungen) und ein
-   Vorschaubild, standardmäßig zusammen als `NAME_LUT.zip`. In der Mac-App wählst du stattdessen
+3. **Exportieren:** Ergibt z. B. `TEALOR-V.cube` (Foto), optional `TEALOM-V.cube` (Video-Variante,
+   M = Movie: weicher, mehr Reserve in den Lichtern), eine Rezeptkarte mit Kamera-Einstellungen
+   und ein Vorschaubild, standardmäßig zusammen als ZIP. Mit Natural enden die Dateien auf `-N`. In der Mac-App wählst du stattdessen
    direkt den Zielordner, z. B. die SD-Karte.
 4. **In die Kamera laden:** `.cube` ins **Hauptverzeichnis** der SD-Karte kopieren.
    Dann an der Kamera MENU › Individual › Bildqualität › LUT-Bibliothek › Platz wählen › Laden.
@@ -82,9 +83,25 @@ Bei den Looks gibt es eine Suche, und der Stern auf einem Vorschaubild merkt ihn
 
 ## Basis-Bildstil
 
-Die LUTs setzen auf den Bildstil **V-Log** auf. Andere Basis-Bildstile (HLG, Standard,
-Natural …) sind im Code vorbereitet, in der Oberfläche aber vorerst ausgeblendet
-(`FEATURES.baseStyles` in `js/app.js`).
+Die LUT setzt auf den Bildstil **V-Log** oder **Natural** auf. Die App liest ihn beim Laden aus
+den Kameradaten jedes Fotos (Panasonic-Makernote) und markiert jedes Bild im Filmstreifen mit
+**V** oder **N**; V-Log- und Natural-Fotos lassen sich also mischen. Ohne Kameradaten (z. B.
+bearbeitete oder verkleinerte Bilder) schätzt sie anhand der Tonwertspanne; unter **Bearbeiten**
+lässt sich der Stil für das aktive Bild umstellen. Der Export richtet sich nach dem aktiven Bild
+(`-V` oder `-N`). Alle Looks funktionieren auf beiden und sehen fast gleich aus. Auf
+echten Bildpaaren derselben Szene weicht derselbe Look im Mittel nur etwa 3–7 von 255 Stufen ab.
+
+| | Natural | V-Log |
+|---|---|---|
+| Mindest-ISO an der S9 | 100 | 640 |
+| Lichter clippen ab etwa | +4 Blenden über Mittelgrau | +6,5 Blenden |
+| Gut für | Alltag, pralle Sonne ohne ND-Filter | Gegenlicht, hohe Kontraste, Video |
+
+V-Log wird mit Panasonics veröffentlichten Formeln zurückgerechnet. Natural mit einer Kurve, die
+an der S9 aus 14 Bildpaaren V-Log/Natural mit identischer Belichtung gemessen wurde (ISO 640,
+Weißabgleich fest, alle Regler im Bildstil auf 0). Für Natural im Bildstil alle Regler auf 0
+lassen. Weitere Basis-Bildstile (HLG, Standard …) sind im Code vorbereitet, aber nur angenähert
+und deshalb ausgeblendet (`FEATURES.baseStyles` in `js/app.js`).
 
 ## Weißabgleich wie an der Kamera
 
@@ -96,10 +113,8 @@ App setzt Kelvin und Tönung so, dass die Fläche neutral wird) und **Auto** (Sc
 ganzen Bild). Temperatur und Tönung bleiben als Feinregler. Alles landet in der LUT; die
 Rezeptkarte nennt zusätzlich den Weißabgleich für die Kamera.
 
-## A/B-Vergleich, Lupe, Vorschau-Effekte
+## Lupe, Vorschau-Effekte
 
-- **A/B:** Das Lesezeichen unten merkt den aktuellen Look als B. Taste `B` (oder der Knopf „B“)
-  zeigt ihn im Wechsel mit dem aktuellen Stand.
 - **1:1-Lupe:** Taste `Z` oder das Lupen-Symbol zeigt die Vorschau in voller Größe
   (lange Kante max. 1800 px), Ziehen verschiebt den Ausschnitt. Gut für Übergänge in Himmeln.
 - **Nur Vorschau:** Vignette und Körnung nur zur Abschätzung des Gesamteindrucks, sie sind
@@ -195,8 +210,10 @@ vorgeschlagen). `npm run app:dev` startet sie zum Entwickeln.
   und Dynamik mit Grau- und Schattenschutz, Color Grading mit drei Farbrädern für Schatten,
   Mitteltöne und Lichter), Schwarzweiß mit Farbfiltern, weiches Auslaufen an der sRGB-Grenze.
 - Vorschau: tetraedrische Interpolation der LUT, wie sie Kameras und Grading-Software nutzen.
-- Datei: `.cube`, 33er-Gitter, Tag `#LUMIXPHOTOSTYLE …` direkt unter dem Titel (V-Log oder der
-  gewählte Basis-Bildstil). Dateiname maximal 8 Zeichen A–Z/0–9 (Grenze bei FAT32-Karten).
+- Datei: `.cube`, 33er-Gitter, Tag `#LUMIXPHOTOSTYLE VLOG` oder `NAT` direkt unter dem Titel.
+  Dateiname maximal 8 Zeichen (Grenze bei SD/SDHC-Karten mit FAT32): Name (bis 6 Zeichen) plus
+  `-V` (V-Log) oder `-N` (Natural); die Video-Variante ersetzt das 6. Zeichen durch `M`,
+  z. B. `TEALOR-V.cube` und `TEALOM-V.cube`.
 - „Meine Looks“ werden im Browser gespeichert (localStorage). Über „Alle als Datei sichern“
   gibt es eine JSON-Sicherung.
 

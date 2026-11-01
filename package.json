@@ -4,7 +4,7 @@
   "private": true,
   "license": "MIT",
   "author": "ernestodiescholle",
-  "description": "Create .cube LUTs for the in-camera Real Time LUT feature (V-Log). Web app + optional Mac app via Tauri.",
+  "description": "Create .cube LUTs for the in-camera Real Time LUT feature (V-Log or Natural base). Web app + optional Mac app via Tauri.",
   "scripts": {
     "test": "node tests/run.js",
     "dist": "sh scripts/build-dist.sh",
