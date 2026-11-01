@@ -48,7 +48,6 @@
     'gemessen': 'measured',
     '(teils geschätzt)': '(partly estimated)',
     '{n} nicht lesbar': '{n} unreadable',
-    'Basis-Bildstil dieses Bildes': 'Base photo style of this image',
     'Bildstil, in dem das aktive Bild fotografiert ist. Wird beim Laden erkannt; der Export richtet sich danach (-V/-N).': 'Photo style the active image was shot in. Detected on load; the export follows it (-V/-N).',
     'Für dieses Bild automatisch erkannt (Kameradaten: {style}).': 'Detected automatically for this image (camera data: {style}).',
     'Laut Kameradaten im Bildstil {style} fotografiert. Unterstützt sind V-Log und Natural; geschätzt: {name}.': 'According to the camera data this was shot in the {style} photo style. V-Log and Natural are supported; estimated: {name}.',
