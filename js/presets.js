@@ -17,8 +17,9 @@
   const CINE = 'Kino';
   const POPULAR = 'Beliebte Stile';
   const EDIT = 'Editorial';
+  const NIGHT = 'Nacht';
   const BW = 'Schwarzweiß';
-  const GROUP_ORDER = [BASE, CLASSIC, NEG, SLIDE, CINE, POPULAR, EDIT, BW];
+  const GROUP_ORDER = [BASE, CLASSIC, NEG, SLIDE, CINE, NIGHT, POPULAR, EDIT, BW];
 
   const PRESETS = [
     {
@@ -308,7 +309,7 @@
       recipe: { exposure: '+1/3 EV', nr: '-3', sharpness: '-2', grain: 'Mittel', note: 'Erinnerungsfotos, Porträts, Innenräume.' },
     },
     {
-      id: 'tungsten800', name: 'Kunstlicht 800', file: 'TUNGS800', group: CINE,
+      id: 'tungsten800', name: 'Kunstlicht 800', file: 'TUNGS800', group: NIGHT,
       desc: 'Kunstlichtfilm: kühler Grundton, türkise Schatten, rötliche Lichter. Stark bei Nacht und Neon.',
       params: {
         temp: -25, tint: 5, contrast: 15, highlights: -15, saturation: -5, fade: 5,
@@ -380,7 +381,7 @@
       recipe: { exposure: '0 EV', sharpness: '-1', grain: 'Schwach', note: 'Regen, Herbst, Innenräume mit Fensterlicht.' },
     },
     {
-      id: 'neon', name: 'Neon Nacht', file: 'NEON', group: CINE,
+      id: 'neon', name: 'Neon Nacht', file: 'NEON', group: NIGHT,
       desc: 'Nachtstadt-Look: blauviolette Schatten, magentafarbene Lichter, leuchtende Neonfarben.',
       params: {
         skinProtect: 40, skinGold: 10,
@@ -760,6 +761,54 @@
       },
       recipe: { grain: 'Mittel', note: 'Fensterlicht, Balkon, Morgenstimmung.' },
     },
+    {
+      id: 'neonrain', name: 'Neonregen', file: 'NEONRG', group: NIGHT,
+      desc: 'Nasse Großstadtnacht: tiefblaue Schatten, türkise Lichter, rote und pinke Neonschilder.',
+      params: {
+        exposure: 0.35, temp: -45, tint: 16, contrast: 20, highlights: -40, saturation: 26, vibrance: 30, skinProtect: 15,
+        splitShadowHue: 264, splitShadowAmt: 64, splitMidHue: 290, splitMidAmt: 24, splitHighHue: 352, splitHighAmt: 42, splitBalance: -8,
+        hsl: {
+          red: { h: -30, s: 40 }, orange: { h: -30, s: 30, l: -5 }, yellow: { h: -30, s: -25 }, green: { h: 30, s: 15 }, aqua: { h: 25, s: 30 }, blue: { h: 5, s: 20 }, purple: { h: 10, s: 25 }, magenta: { h: -10, s: 40 },
+        },
+      },
+      recipe: { exposure: '0 bis -1/3 EV', grain: 'Schwach', note: 'Nachts in der Stadt mit Leuchtreklamen, am besten bei Regen oder nassem Asphalt. Lichter eher schützen (−1/3 EV).' },
+    },
+    {
+      id: 'violethaze', name: 'Violetter Nebel', file: 'VIOLET', group: NIGHT,
+      desc: 'Diesige Neonnacht in Lila und Violett, türkise Akzente, weiche Lichter.',
+      params: {
+        exposure: 0.6, temp: -25, tint: 55, contrast: 5, highlights: -50, shadows: 5, fade: 12, whiteMatte: 10, saturation: 35, vibrance: 25, skinProtect: 15,
+        splitShadowHue: 302, splitShadowAmt: 80, splitMidHue: 318, splitMidAmt: 60, splitHighHue: 330, splitHighAmt: 45,
+        hsl: {
+          red: { h: 20, s: 10 }, orange: { h: -30, s: 10 }, yellow: { h: -30, s: -30 }, green: { h: 30, s: 20 }, aqua: { h: 10, s: 30 }, blue: { h: 30, s: 30 }, purple: { h: 15, s: 35 }, magenta: { s: 30 },
+        },
+      },
+      recipe: { exposure: '0 bis -1/3 EV', grain: 'Schwach', note: 'Nebel, Regen, Gassen mit Neonlicht. Wirkt am stärksten mit Dunst oder Gegenlicht.' },
+    },
+    {
+      id: 'redcyan', name: 'Rot & Cyan', file: 'ROTCYN', group: NIGHT,
+      desc: 'Kontrastreiche Neonnacht: fast schwarze, marineblaue Schatten, sattes Rot und leuchtendes Cyan.',
+      params: {
+        exposure: 0.25, temp: -30, tint: 8, contrast: 30, highlights: -30, shadows: -30, saturation: 15, vibrance: 18, skinProtect: 25,
+        splitShadowHue: 250, splitShadowAmt: 60, splitMidHue: 238, splitMidAmt: 12, splitHighHue: 30, splitHighAmt: 10, splitBalance: -20,
+        hsl: {
+          red: { h: 3, s: 35 }, orange: { h: -20, s: 35 }, yellow: { h: -25, s: -5 }, green: { h: 30, s: 10 }, aqua: { h: 20, s: 30 }, blue: { h: -20, s: 30 }, purple: { h: -15, s: 10 }, magenta: { h: 30, s: 30 },
+        },
+      },
+      recipe: { exposure: '0 bis -1/3 EV', grain: 'Schwach', note: 'Belebte Straßen mit Leuchtreklamen. Lichter schützen, Schwarz darf satt sein.' },
+    },
+    {
+      id: 'tealrain', name: 'Petrol-Regen', file: 'PETROL', group: NIGHT,
+      desc: 'Regennacht in gedämpftem Petrol und Türkis, matte Schatten, warme Akzente in Lichtern und Schildern.',
+      params: {
+        exposure: 0.35, temp: -40, tint: -6, contrast: -5, highlights: -35, shadows: 10, fade: 10, whiteMatte: 6, saturation: -15, vibrance: 10, skinProtect: 30,
+        splitShadowHue: 214, splitShadowAmt: 55, splitMidHue: 208, splitMidAmt: 35, splitHighHue: 200, splitHighAmt: 20,
+        hsl: {
+          red: { s: 15 }, orange: { h: -5, s: 10 }, yellow: { h: 5, s: 5 }, green: { h: 30, s: -30 }, aqua: { h: 10, s: -5 }, blue: { h: -30, s: -30 }, purple: { s: -40 }, magenta: { h: 20, s: -10 },
+        },
+      },
+      recipe: { exposure: '0 bis +1/3 EV', grain: 'Mittel', note: 'Regen, nasse Straßen, Großstadt bei Nacht. Wirkt filmisch ruhig statt knallig.' },
+    },
   ];
 
   // Englische Texte je Look (Sprachumschaltung).
@@ -833,8 +882,12 @@
     terracotta: {"name": "Terracotta", "desc": "Warm reds like fired clay, rich shadows, strong skin tones.", "note": "Brick, wood, interiors, portraits in warm light."},
     sandstone: {"name": "Sandstone", "desc": "Desaturated beige, pastel colours and flat contrast.", "note": "Landscape in bright light, desert, beach, travel."},
     morningglow: {"name": "Morning Glow", "desc": "Bright and warmly glowing: golden highlights, open shadows, soft skin.", "note": "Window light, balcony, morning mood."},
+    neonrain: {"name": "Neon Rain", "desc": "Wet city night: deep blue shadows, turquoise lights, red and pink neon signs.", "note": "At night in the city with neon signs, ideally in rain or on wet tarmac. Rather protect the highlights (−1/3 EV)."},
+    violethaze: {"name": "Violet Haze", "desc": "Hazy neon night in lilac and violet, turquoise accents, soft highlights.", "note": "Fog, rain, alleys with neon light. Strongest with haze or backlight."},
+    redcyan: {"name": "Red & Cyan", "desc": "High-contrast neon night: near-black navy shadows, rich red and glowing cyan.", "note": "Busy streets with neon signs. Protect the highlights, blacks may be deep."},
+    tealrain: {"name": "Teal Rain", "desc": "Rainy night in muted teal and turquoise, matte shadows, warm accents in lights and signs.", "note": "Rain, wet streets, big city at night. Looks calm and filmic rather than loud."},
   };
-  const GROUP_EN = {"Basis": "Basics", "Kamera-Klassiker": "Camera Classics", "Farbnegativ": "Color Negative", "Dia & Kräftig": "Slide & Punchy", "Kino": "Cinema", "Beliebte Stile": "Popular Styles", "Editorial": "Editorial", "Schwarzweiß": "Black & White"};
+  const GROUP_EN = {"Basis": "Basics", "Kamera-Klassiker": "Camera Classics", "Farbnegativ": "Color Negative", "Dia & Kräftig": "Slide & Punchy", "Kino": "Cinema", "Beliebte Stile": "Popular Styles", "Editorial": "Editorial", "Nacht": "Night", "Schwarzweiß": "Black & White"};
 
   for (const p of PRESETS) {
     p.recipe = Object.assign({}, RECIPE_DEFAULT, p.recipe);
