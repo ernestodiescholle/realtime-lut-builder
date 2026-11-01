@@ -325,19 +325,45 @@ body.mono .section .color-only { display: none; }
 }
 .toast.show { opacity: 1; transform: translateX(-50%); }
 
-/* --- Schmale Fenster ---------------------------------------------------- */
+/* --- Schmale Fenster (Handy) ---------------------------------------------- */
+/* Reihenfolge per CSS: Kopfleiste und Bild bleiben oben stehen, darunter Ansicht/Filmstreifen,
+   dann die Reiter (ebenfalls stehend) und die scrollenden Regler. */
 @media (max-width: 900px) {
-  body { display: block; height: auto; overflow: auto; }
-  .topbar { height: 48px; position: sticky; top: 0; z-index: 5; }
+  :root { --img-h: max(36vh, 200px); }
+  body { display: flex; flex-direction: column; height: auto; min-height: 100vh; overflow: visible; }
+  .workspace { display: contents; }
+  .topbar { order: 0; flex: none; height: 48px; position: sticky; top: 0; z-index: 6; }
+  .brand .sep, .brand .doc { display: none; }
+  .brand .app { white-space: nowrap; }
   .top-actions .btn span { display: none; }
-  .workspace { display: flex; flex-direction: column; }
-  .canvas-area { min-height: 46vh; padding: 14px; }
-  #view { max-height: 56vh; }
-  .rail { order: 2; flex-direction: row; justify-content: center; border-left: 0; border-top: 1px solid #111; padding: 6px; position: sticky; top: 48px; z-index: 4; }
-  .rail button { width: 76px; }
-  .panel { order: 3; border-left: 0; overflow: visible; }
-  .bottombar { height: 84px; }
+  .canvas-area { order: 1; flex: none; position: sticky; top: 48px; z-index: 5; height: var(--img-h); min-height: 0; padding: 8px; }
+  #view { max-height: calc(var(--img-h) - 16px); touch-action: pan-y; }
+  .canvas-area.loupe #view { touch-action: none; }
+  .hint { bottom: 8px; font-size: 11px; }
+  .hint.show:not(.warn) { display: none; }
+  .bottombar { order: 2; flex: none; height: auto; padding: 6px 10px; gap: 10px; }
   .bottombar .seg span { display: none; }
+  .filmstrip { padding: 4px 2px; }
+  .film { height: 48px; }
+  .rail {
+    order: 3; flex: none; flex-direction: row; justify-content: center; border-left: 0; border-top: 1px solid #111;
+    padding: 4px; position: sticky; top: calc(48px + var(--img-h)); z-index: 4;
+  }
+  .rail button { width: 72px; }
+  .panel { order: 4; flex: none; border-left: 0; overflow: visible; }
+}
+@media (max-width: 480px) {
+  .brand .app { display: none; }
+  .topbar { gap: 8px; padding: 0 8px 0 12px; }
+}
+/* Finger statt Maus: größere Ziele, passende Hinweise */
+.touch-only { display: none; }
+@media (pointer: coarse) {
+  .touch-only { display: block; }
+  .mouse-only { display: none; }
+  .icon-btn { width: 40px; height: 40px; }
+  .dot { width: 30px; height: 30px; }
+  .seg button { min-height: 34px; }
 }
 
 /* --- Suche, Favoriten, Abgleich, Verlauf ------------------------------------ */

@@ -135,6 +135,7 @@
 
     // --- Looks ------------------------------------------------------------------------
     'Looks durchsuchen …': 'Search looks …',
+    'Tippen übernimmt einen Look, der Stern merkt ihn als Favorit.': 'Tap a look to apply it; the star marks it as a favourite.',
     'Mit der Maus über einen Look fahren zeigt ihn in der Vorschau. Klick übernimmt ihn, der Stern merkt ihn als Favorit.':
       'Hover over a look to preview it. Click applies it, the star marks it as a favourite.',
     'Favoriten': 'Favourites',
