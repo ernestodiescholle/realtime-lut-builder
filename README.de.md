@@ -229,6 +229,9 @@ vorgeschlagen). `npm run app:dev` startet sie zum Entwickeln.
   (z. B. tiefes Grün bei sehr kräftigen Looks) um bis zu etwa 7 %. Bei Alltagsfarben liegt die
   Abweichung unter 1,5 %. Die Vorschau zeigt immer das Gitter-Ergebnis, also das, was die Kamera macht.
 - In V-Log gilt an der Kamera eine höhere Mindest-ISO.
+- Auf dem iPhone Fotos über **„Datei auswählen“** (Dateien-App) laden, nicht aus der Fotos-Mediathek:
+  Die Mediathek gibt eine neu kodierte Kopie ohne Kameradaten heraus, dann muss die App V-Log oder
+  Natural schätzen (meist richtig, sonst unter **Bearbeiten** umstellen).
 
 ## Tests
 

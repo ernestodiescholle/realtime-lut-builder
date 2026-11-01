@@ -835,7 +835,9 @@
     const cnt = (tag) => added.filter((im) => im.base === tag).length;
     const head = n === 1 ? t('{name} geladen', { name: lastName }) : t('{n} Bilder geladen', { n });
     const parts = FEATURES.baseStyles.filter((tag) => cnt(tag)).map((tag) => (n === 1 ? '' : cnt(tag) + '× ') + t(G.baseInfo(tag).name));
-    return head + ' · ' + parts.join(', ') + (added.some((im) => im.baseSource !== 'exif') ? ' ' + t('(teils geschätzt)') : '');
+    const guessed = added.filter((im) => im.baseSource !== 'exif').length;
+    const note = !guessed ? '' : ' ' + t(guessed === n ? '(geschätzt, keine Kameradaten)' : '(teils geschätzt)');
+    return head + ' · ' + parts.join(', ') + note;
   }
 
   function loadFiles(fileList) {

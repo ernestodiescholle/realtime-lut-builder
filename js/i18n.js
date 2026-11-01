@@ -47,6 +47,7 @@
     'relativ': 'relative',
     'gemessen': 'measured',
     '(teils geschätzt)': '(partly estimated)',
+    '(geschätzt, keine Kameradaten)': '(estimated, no camera data)',
     '{n} nicht lesbar': '{n} unreadable',
     'Bildstil, in dem das aktive Bild fotografiert ist. Wird beim Laden erkannt; der Export richtet sich danach (-V/-N).': 'Photo style the active image was shot in. Detected on load; the export follows it (-V/-N).',
     'Für dieses Bild automatisch erkannt (Kameradaten: {style}).': 'Detected automatically for this image (camera data: {style}).',

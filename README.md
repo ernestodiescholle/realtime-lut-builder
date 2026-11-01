@@ -98,6 +98,9 @@ No photo at hand? The built-in synthetic V-Log test image lets you try everythin
   +2/3 EV often helps.
 - A LUT changes every pixel independently. Grain, vignette, sharpness, clarity and halation
   cannot be part of a LUT – use the camera settings for grain and sharpness.
+- On iPhone, import photos via **Choose File** (Files app) rather than the Photos library: the
+  library hands over a re-encoded copy without the camera data, so the app has to estimate
+  V-Log or Natural (usually correctly, but you can switch it under **Edit**).
 - The app warns you when a loaded image does not match the chosen base photo style (e.g. a
   Standard JPEG or V-Log with a LUT already applied).
 
