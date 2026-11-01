@@ -43,7 +43,7 @@ Gezeigt mit dem eingebauten synthetischen V-Log-Testbild und dem Look *Teal & Or
 
 | | |
 |:---:|:---:|
-| <img src="docs/screenshots/looks.png" width="400" alt="Looks tab"><br><sub>**Looks** – 73 Start-Looks, Vorschau beim Darüberfahren</sub> | <img src="docs/screenshots/edit.png" width="400" alt="Edit tab"><br><sub>**Bearbeiten** – Licht, Kontrast, Lichter, Schatten</sub> |
+| <img src="docs/screenshots/looks.png" width="400" alt="Looks tab"><br><sub>**Looks** – 74 Start-Looks, Vorschau beim Darüberfahren</sub> | <img src="docs/screenshots/edit.png" width="400" alt="Edit tab"><br><sub>**Bearbeiten** – Licht, Kontrast, Lichter, Schatten</sub> |
 | <img src="docs/screenshots/curve.png" width="400" alt="Tone curve and white balance"><br><sub>**Tonkurve & Weißabgleich** – Punktkurven (Luminanz, RGB), Weißabgleich wie an der Kamera</sub> | <img src="docs/screenshots/grading.png" width="400" alt="Colour grading"><br><sub>**Farbe** – Sättigung, Hautton-Schutz, Farbmischer, Color-Grading-Räder</sub> |
 | <img src="docs/screenshots/split.png" width="400" alt="Before/after split view"><br><sub>**Geteilte Ansicht** – links V-Log, rechts der Look</sub> | <img src="docs/screenshots/match.png" width="400" alt="Match tab"><br><sub>**Abgleich** – Referenzbild-Abgleich und Kamera-Vergleich</sub> |
 | <img src="docs/screenshots/export.png" width="400" alt="Export tab"><br><sub>**Export** – kamerafertige `.cube`, Video-Variante, Rezeptkarte</sub> | |
@@ -147,14 +147,14 @@ prüfen, ob Vorschau und Kamera übereinstimmen. Die Messzahlen entstehen stark 
 JPEG-Rauschen nicht mitzählt; das Abweichungsbild ist feiner aufgelöst. Beide Aufnahmen müssen
 denselben Bildausschnitt zeigen (Stativ).
 
-## Looks (73)
+## Looks (74)
 
 - **Basis:** Neutral
 - **Kamera-Klassiker:** Ausgewogen, Leuchtend, Sanft, Dokumentar, Porträt Kontrast,
   Porträt Sanft, Schnappschuss, Nostalgie, Kino Flach, Bleach Bypass
 - **Farbnegativ:** Porträtfilm 160/400/800, Sommerfilm 200, Sonnenlicht-Film, Alltagsfilm 400, Retrofilm 200,
   Minze 400, Kühles Negativ 400, Einfachfilm 200, Rotakzent
-- **Dia & Kräftig:** Klassisches Dia, Modernes Dia, Wild 800
+- **Dia & Kräftig:** Klassisches Dia, Modernes Dia, Herbstdia, Wild 800
 - **Kino:** Kinonegativ, Tageslicht-Kino, Teal & Orange, Kino-Print warm, Kino-Print kühl,
   Moody Kino, Warme Wüste, Nordisch kühl
 - **Nacht:** Neon Nacht, Kunstlicht 800, Neonregen, Violetter Nebel, Rot & Cyan, Petrol-Regen

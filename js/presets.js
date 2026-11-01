@@ -809,6 +809,18 @@
       },
       recipe: { exposure: '0 bis +1/3 EV', grain: 'Mittel', note: 'Regen, nasse Straßen, Großstadt bei Nacht. Wirkt filmisch ruhig statt knallig.' },
     },
+    {
+      id: 'autumnslide', name: 'Herbstdia', file: 'HERBST', group: SLIDE,
+      desc: 'Kräftiger Dia-Look: leuchtendes Orange und Gold, tiefes Himmelblau, satte, fast schwarze Schatten.',
+      params: {
+        exposure: -0.3, temp: 8, contrast: 45, highlights: -15, shadows: -35, saturation: 12, vibrance: 15, skinProtect: 40, skinGold: 20,
+        splitShadowHue: 55, splitShadowAmt: 18,
+        hsl: {
+          red: { s: 10 }, orange: { h: -8, s: 30, l: -5 }, yellow: { h: -18, s: 20 }, green: { h: -15, s: -25, l: -8 }, aqua: { h: 15, s: 10 }, blue: { s: 30, l: -15 },
+        },
+      },
+      recipe: { wb: 'Tageslicht', exposure: '-1/3 EV', grain: 'Schwach', note: 'Herbst, Berge, Landschaft bei Sonne und Gegenlicht. Eher knapp belichten, die Lichter bleiben dann sauber.' },
+    },
   ];
 
   // Englische Texte je Look (Sprachumschaltung).
@@ -886,6 +898,7 @@
     violethaze: {"name": "Violet Haze", "desc": "Hazy neon night in lilac and violet, turquoise accents, soft highlights.", "note": "Fog, rain, alleys with neon light. Strongest with haze or backlight."},
     redcyan: {"name": "Red & Cyan", "desc": "High-contrast neon night: near-black navy shadows, rich red and glowing cyan.", "note": "Busy streets with neon signs. Protect the highlights, blacks may be deep."},
     tealrain: {"name": "Teal Rain", "desc": "Rainy night in muted teal and turquoise, matte shadows, warm accents in lights and signs.", "note": "Rain, wet streets, big city at night. Looks calm and filmic rather than loud."},
+    autumnslide: {"name": "Autumn Slide", "desc": "Punchy slide look: glowing orange and gold, deep sky blue, rich, almost black shadows.", "note": "Autumn, mountains, landscape in sunshine and backlight. Rather expose a little less; the highlights stay clean."},
   };
   const GROUP_EN = {"Basis": "Basics", "Kamera-Klassiker": "Camera Classics", "Farbnegativ": "Color Negative", "Dia & Kräftig": "Slide & Punchy", "Kino": "Cinema", "Beliebte Stile": "Popular Styles", "Editorial": "Editorial", "Nacht": "Night", "Schwarzweiß": "Black & White"};
 
