@@ -69,12 +69,6 @@
       recipe: { wb: 'Tageslicht', wbShift: 'A1 / G0', exposure: '0 bis -1/3 EV', nr: '-3', sharpness: '-1', grain: 'Schwach', note: 'Street und Reportage. Bei hartem Licht wirken die Schatten besonders schön.' },
     },
     {
-      id: 'truecolor', name: 'Farbtreu', file: 'TRUECOL', group: CLASSIC,
-      desc: 'Farbtreu mit knackiger Gradation, wie ein moderner Negativfilm.',
-      params: { skinProtect: 20, skinGold: 15, contrast: 15, vibrance: 5, hsl: { orange: { l: 3 }, green: { h: -3 }, blue: { s: 5 } } },
-      recipe: { note: 'Wenn es natürlich, aber nicht langweilig aussehen soll.' },
-    },
-    {
       id: 'portraitpunch', name: 'Porträt Kontrast', file: 'PORTCONT', group: CLASSIC,
       desc: 'Porträtfilm mit etwas mehr Kontrast, zurückhaltende Farben, schöne Haut.',
       params: { skinProtect: 40, skinGold: 35, contrast: 15, saturation: -8, hsl: { red: { s: -5 }, orange: { s: -5, l: 5 }, green: { s: -10 } } },
@@ -165,16 +159,6 @@
         hsl: { red: { s: 5 }, orange: { s: 5 }, green: { h: -15, s: -25 }, blue: { h: -10, s: -5 } },
       },
       recipe: { wb: 'Tageslicht', exposure: '+1/3 EV', nr: '-3', grain: 'Mittel', note: 'Abendlicht, Innenräume, Konzerte.' },
-    },
-    {
-      id: 'landscape100', name: 'Landschaftsfilm 100', file: 'LANDF100', group: SLIDE,
-      desc: 'Feinkörniger Farbfilm: kräftig, kontrastreich, tiefes Blau.',
-      params: {
-        skinProtect: 50, skinGold: 30,
-        contrast: 30, saturation: 25, vibrance: 10, temp: 2,
-        hsl: { red: { s: 15 }, orange: { s: 5 }, yellow: { s: 10 }, green: { h: -5, s: 10 }, aqua: { s: 5 }, blue: { s: 10, l: -10 } },
-      },
-      recipe: { wb: 'Tageslicht', exposure: '0 bis -1/3 EV', note: 'Landschaft und Architektur. Achtung bei Hauttönen, die werden schnell kräftig.' },
     },
     {
       id: 'summer200', name: 'Sommerfilm 200', file: 'SUMMR200', group: NEG,
@@ -300,16 +284,6 @@
         hsl: { red: { h: -5, s: 20 }, orange: { s: 5 }, green: { h: -5, s: 5 }, blue: { h: 3, s: 10 } },
       },
       recipe: { wb: 'Tageslicht', exposure: '0 EV', nr: '-3', grain: 'Mittel', note: 'Street mit roten Akzenten, Sommer.' },
-    },
-    {
-      id: 'ultravivid', name: 'Ultrabunt', file: 'ULTRAVIV', group: SLIDE,
-      desc: 'Extrem gesättigt, sehr kräftige Grundfarben.',
-      params: {
-        skinProtect: 55, skinGold: 30,
-        contrast: 30, saturation: 35,
-        hsl: { red: { s: 15 }, yellow: { s: 10 }, green: { s: 15 }, blue: { s: 15, l: -5 } },
-      },
-      recipe: { wb: 'Tageslicht', exposure: '-1/3 EV', note: 'Bunte Motive, Pop-Look.' },
     },
     {
       id: 'wild800', name: 'Wild 800', file: 'WILD800', group: SLIDE,
@@ -571,12 +545,6 @@
       recipe: { nr: '-3', grain: 'Mittel', note: 'Alltag, Dokumentation, wechselndes Licht.' },
     },
     {
-      id: 'bwcrisp', name: 'SW Klar', file: 'BWCRISP', group: BW,
-      desc: 'Sehr klar und fein, knackige Tonwerte.',
-      params: { mono: true, monoFilter: 'yellow', contrast: 25, highlights: -5, shadows: -10 },
-      recipe: { sharpness: '+1', note: 'Architektur, Produkte, Landschaft.' },
-    },
-    {
       id: 'bwnight', name: 'SW Nacht', file: 'BWNIGHT', group: BW,
       desc: 'Grobes, kontrastreiches Nacht-Schwarzweiß.',
       params: { mono: true, monoFilter: 'none', contrast: 45, highlights: 15, shadows: -10, fade: 8 },
@@ -801,7 +769,6 @@
     vibrant: {"name": "Vibrant", "desc": "Lively: strong colours, deep shadows, rich blue and green.", "note": "Landscape and nature. Usually too strong for portraits."},
     softcolor: {"name": "Soft", "desc": "Gentle: soft contrast, flattering skin tones, still lively colours.", "note": "Outdoor portraits and fashion."},
     documentary: {"name": "Documentary", "desc": "Muted colours, rich shadows, cyan-leaning blue, olive greens.", "note": "Street and reportage. Shadows look especially good in hard light."},
-    truecolor: {"name": "True Color", "desc": "Faithful colours with crisp tonality, like a modern negative film.", "note": "When it should look natural but not boring."},
     portraitpunch: {"name": "Portrait Contrast", "desc": "Portrait film with a bit more contrast, restrained colours, beautiful skin.", "note": "Portraits in flat light."},
     portraitsoft: {"name": "Portrait Soft", "desc": "Very soft and neutral, like studio negative film.", "note": "Portraits in contrasty light, also indoors."},
     snapshot: {"name": "Snapshot", "desc": "Hard curve, teal shadows, warm highlights, red slightly towards magenta.", "note": "Everyday and family photos with a snapshot feel. Don’t underexpose."},
@@ -811,7 +778,6 @@
     portrait160: {"name": "Portrait Film 160", "desc": "Fine and restrained, natural skin tones, soft pastels.", "note": "Portraits and weddings in good light."},
     portrait400: {"name": "Portrait Film 400", "desc": "Warm, pastel, glowing skin tones, muted greens, soft highlights.", "note": "Like negative film: rather expose generously. Strong for portraits and backlight."},
     portrait800: {"name": "Portrait Film 800", "desc": "Warmer and richer than Portrait Film 400, slightly cool shadows.", "note": "Evening light, interiors, concerts."},
-    landscape100: {"name": "Landscape Film 100", "desc": "Fine-grain colour film: punchy, contrasty, deep blue.", "note": "Landscape and architecture. Careful with skin tones, they get strong quickly."},
     summer200: {"name": "Summer Film 200", "desc": "Sunny consumer film: warm, strong yellows, nostalgic.", "note": "Holidays, summer, golden hour."},
     sunlit: {"name": "Sunlit Film", "desc": "Sunny negative film: rich green, glowing yellow, pale hazy sky, soft highlights, warm stone.", "note": "Sun and backlight in nature, trees, coast. Calmer under an overcast sky."},
     everyday400: {"name": "Everyday Film 400", "desc": "Punchy everyday film: warm, rich reds and yellows, a hint of grain feel.", "note": "Snapshots, parties, everyday life."},
@@ -823,7 +789,6 @@
     coolneg400: {"name": "Cool Negative 400", "desc": "Consumer film with a slight green tint: cool shadows, strong greens.", "note": "Everyday, city, nature."},
     simple200: {"name": "Simple Film 200", "desc": "Simple consumer film: slightly matte, cool greenish shadows, muted blue.", "note": "Casual everyday and holiday photos."},
     redaccent: {"name": "Red Accent", "desc": "Glowing reds, warm, strong contrast.", "note": "Street with red accents, summer."},
-    ultravivid: {"name": "Ultra Vivid", "desc": "Extremely saturated, very strong primary colours.", "note": "Colourful subjects, pop look."},
     wild800: {"name": "Wild 800", "desc": "Wild and punchy: hard contrast, teal shadows, strong colours.", "note": "Parties, night, experiments."},
     instant: {"name": "Instant Photo", "desc": "Like an instant print: matte, faded, warm highlights, cool shadows.", "note": "Memories, portraits, interiors."},
     tungsten800: {"name": "Tungsten 800", "desc": "Tungsten film: cool base tone, teal shadows, reddish highlights. Strong at night and with neon.", "note": "At night in the city. In daylight the image turns deliberately blue, like real tungsten film. A LUT cannot create the red halation glow of such films."},
@@ -848,7 +813,6 @@
     bwfinegreen: {"name": "B&W Fine + Green Filter", "desc": "Bright foliage, natural-looking skin tones.", "note": "Portraits in greenery, forest."},
     bwreportage: {"name": "B&W Reportage", "desc": "Classic reportage film: strong contrast, slightly lifted blacks, warm tone.", "note": "Street and people. Ideally in hard light."},
     bwclassic: {"name": "B&W Classic", "desc": "Softer reportage black and white with lots of detail.", "note": "Everyday, documentary, changing light."},
-    bwcrisp: {"name": "B&W Crisp", "desc": "Very clean and fine, crisp tonality.", "note": "Architecture, products, landscape."},
     bwnight: {"name": "B&W Night", "desc": "Gritty, contrasty night black and white.", "note": "Night, concerts, mood over detail."},
     sepia: {"name": "Sepia", "desc": "Warm-toned black and white like an old print.", "note": "Portraits, family photos, nostalgia."},
     bwhigh: {"name": "B&W High Contrast", "desc": "Dramatic black and white with deep blacks and brilliant highlights (red filter).", "note": "Architecture, sunny street, cloudy skies."},

@@ -37,7 +37,8 @@
   const view = $('view');
   const current = () => state.images[state.active];
   // Optionale Umleitung früherer Look-IDs (z. B. nach Umbenennungen); standardmäßig leer.
-  const ALIASES = window.LutPresetAliases || {};
+  // Zusammengelegte Looks: alte IDs (gespeicherte Looks, Favoriten) zeigen auf den behaltenen Look.
+  const ALIASES = { ultravivid: 'vibrant', landscape100: 'vibrant', truecolor: 'balanced', bwcrisp: 'bwfine' };
   const resolveId = (id) => ALIASES[id] || id;
   const preset = () => PRESETS.find((p) => p.id === state.presetId) || PRESETS[0];
   const base = () => G.baseInfo(state.params.baseStyle);
